@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Peta Investasi NTB - Presentasi Interaktif</title>
+    <meta name="description" content="Dashboard interaktif investasi Nusa Tenggara Barat dengan detail 10 kabupaten/kota dan 16 sektor ekonomi">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Leaflet CSS -->
@@ -20,6 +21,9 @@
             --text-light: #6b7280;
             --border-light: #e5e7eb;
             --hover-bg: #f3f4f6;
+            --error-red: #dc2626;
+            --success-green: #16a34a;
+            --warning-yellow: #ca8a04;
         }
 
         * {
@@ -36,6 +40,116 @@
             overflow: hidden;
         }
 
+        /* Skip to content for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--primary-blue);
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 10000;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 6px;
+        }
+
+        /* Loading States */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-light);
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-dark);
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .loading-subtext {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Error States */
+        .error-state {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--error-red);
+        }
+
+        .error-state.show {
+            display: block;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+
+        .error-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .retry-btn {
+            padding: 10px 20px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            background: var(--dark-blue);
+            transform: translateY(-1px);
+        }
+
         .presentation-container {
             width: 100vw;
             height: 100vh;
@@ -44,56 +158,70 @@
             position: relative;
         }
 
-        /* Header Presentation */
+        /* Enhanced Header */
         .presentation-header {
             background: var(--white);
-            padding: 20px 40px;
+            padding: 15px 20px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 100;
+            min-height: 80px;
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
+            flex: 1;
+            min-width: 0;
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
+            flex-shrink: 0;
         }
 
         .logo {
-            height: 60px;
+            height: 45px;
             width: auto;
+            max-width: 120px;
+        }
+
+        .title-section {
+            min-width: 0;
+            flex: 1;
         }
 
         .title-section h1 {
-            font-size: 1.8rem;
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
             font-weight: 800;
             color: var(--primary-blue);
-            margin-bottom: 5px;
+            margin-bottom: 3px;
+            line-height: 1.2;
         }
 
         .title-section p {
             color: var(--text-light);
-            font-size: 0.9rem;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
             font-weight: 500;
+            line-height: 1.3;
         }
 
         .header-right {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
+            flex-shrink: 0;
         }
 
         .presentation-controls {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .control-btn {
@@ -104,13 +232,26 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .control-btn:hover, .control-btn.active {
+        .control-btn:hover, 
+        .control-btn.active,
+        .control-btn:focus {
             background: var(--primary-blue);
             color: var(--white);
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+
+        .control-btn:focus-visible {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
         }
 
         /* Main Content Area */
@@ -119,28 +260,30 @@
             display: flex;
             background: var(--white);
             position: relative;
+            min-height: 0;
         }
 
-        /* Slide Navigation */
+        /* Enhanced Slide Navigation */
         .slide-navigation {
-            width: 300px;
+            width: 280px;
             background: var(--light-bg);
             border-right: 1px solid var(--border-light);
             overflow-y: auto;
-            padding: 20px;
+            padding: 20px 15px;
+            flex-shrink: 0;
         }
 
         .nav-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
-        /* Search Box */
+        /* Enhanced Search */
         .search-container {
             position: relative;
             margin-bottom: 15px;
@@ -169,6 +312,7 @@
             transform: translateY(-50%);
             color: var(--text-light);
             font-size: 0.9rem;
+            pointer-events: none;
         }
 
         .search-clear {
@@ -186,9 +330,11 @@
             display: none;
         }
 
-        .search-clear:hover {
+        .search-clear:hover,
+        .search-clear:focus {
             background: var(--hover-bg);
             color: var(--text-dark);
+            outline: 2px solid var(--primary-blue);
         }
 
         .search-clear.show {
@@ -198,13 +344,12 @@
         .region-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            max-height: calc(100vh - 250px);
+            gap: 10px;
+            max-height: calc(100vh - 280px);
             overflow-y: auto;
             padding-right: 5px;
         }
 
-        /* Custom scrollbar for region list */
         .region-list::-webkit-scrollbar {
             width: 6px;
         }
@@ -224,19 +369,25 @@
         }
 
         .region-item {
-            padding: 15px;
+            padding: 12px;
             background: var(--white);
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid transparent;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
         }
 
         .region-item:hover {
             border-color: var(--primary-blue);
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+        }
+
+        .region-item:focus {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
         }
 
         .region-item.active {
@@ -248,14 +399,21 @@
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 5px;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.3;
         }
 
         .region-stats {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-light);
+            gap: 10px;
+        }
+
+        .region-investment {
+            font-weight: 600;
+            color: var(--primary-green);
         }
 
         .region-item.hidden {
@@ -264,7 +422,7 @@
 
         .no-results {
             text-align: center;
-            padding: 30px 20px;
+            padding: 30px 15px;
             color: var(--text-light);
             display: none;
         }
@@ -279,17 +437,19 @@
             opacity: 0.5;
         }
 
-        /* Main Slide Area */
+        /* Enhanced Main Slide Area */
         .slide-content {
             flex: 1;
-            padding: 30px;
+            padding: 20px;
             overflow-y: auto;
             position: relative;
+            min-width: 0;
         }
 
         .slide {
             display: none;
             animation: slideIn 0.5s ease-in-out;
+            min-height: 100%;
         }
 
         .slide.active {
@@ -307,74 +467,151 @@
             }
         }
 
-        /* Welcome Slide */
+        /* Enhanced Welcome Slide */
         .welcome-slide {
             text-align: center;
-            padding: 60px 40px;
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100%;
+            min-height: 500px;
         }
 
         .welcome-icon {
-            font-size: 4rem;
+            font-size: clamp(3rem, 8vw, 4rem);
             color: var(--primary-blue);
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .welcome-title {
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
             font-weight: 800;
             color: var(--text-dark);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            line-height: 1.2;
         }
 
         .welcome-subtitle {
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 3vw, 1.2rem);
             color: var(--text-light);
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             max-width: 600px;
             line-height: 1.6;
         }
 
         .welcome-instructions {
             background: var(--light-bg);
-            padding: 25px;
+            padding: 20px;
             border-radius: 15px;
             border-left: 5px solid var(--primary-blue);
             max-width: 500px;
+            text-align: left;
+            width: 100%;
         }
 
         .welcome-instructions h3 {
             color: var(--primary-blue);
             margin-bottom: 15px;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .welcome-instructions p {
             color: var(--text-light);
             line-height: 1.5;
+            font-size: 0.9rem;
         }
 
-        /* Region Detail Slide */
+        /* Enhanced Region Detail */
         .region-detail-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+            align-items: flex-start;
+            margin-bottom: 25px;
             padding-bottom: 20px;
             border-bottom: 3px solid var(--border-light);
             flex-wrap: wrap;
             gap: 20px;
         }
 
+        .region-detail-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .region-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .region-title-text h2 {
+            font-size: clamp(1.3rem, 4vw, 1.8rem);
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
+
+        .region-title-text p {
+            color: var(--text-light);
+            font-size: clamp(0.8rem, 2vw, 0.95rem);
+        }
+
+        .region-stats-summary {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            padding: 10px 12px;
+            background: var(--light-bg);
+            border-radius: 10px;
+            border-bottom: 3px solid var(--primary-blue);
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .stat-value {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            font-weight: 700;
+            color: var(--primary-blue);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        /* Enhanced Sector Controls */
         .sector-controls {
             display: flex;
             gap: 10px;
             align-items: center;
             flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--light-bg);
+            border-radius: 10px;
         }
 
         .sector-toggle {
@@ -382,99 +619,47 @@
             align-items: center;
             gap: 8px;
             padding: 8px 12px;
-            background: var(--light-bg);
+            background: var(--white);
             border-radius: 8px;
-            border: none;
+            border: 2px solid var(--border-light);
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 0.85rem;
             font-weight: 500;
         }
 
-        .sector-toggle:hover {
+        .sector-toggle:hover,
+        .sector-toggle:focus {
             background: var(--border-light);
+            outline: 2px solid var(--primary-blue);
         }
 
         .sector-toggle.active {
             background: var(--primary-blue);
             color: var(--white);
+            border-color: var(--primary-blue);
         }
 
         .sector-count-info {
             font-size: 0.8rem;
             color: var(--text-light);
             padding: 8px 12px;
-            background: var(--light-bg);
+            background: var(--white);
             border-radius: 8px;
+            border: 1px solid var(--border-light);
         }
 
-        .region-detail-title {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .region-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-size: 1.5rem;
-        }
-
-        .region-title-text h2 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 5px;
-        }
-
-        .region-title-text p {
-            color: var(--text-light);
-            font-size: 0.95rem;
-        }
-
-        .region-stats-summary {
-            display: flex;
-            gap: 20px;
-            text-align: center;
-        }
-
-        .stat-item {
-            padding: 10px 15px;
-            background: var(--light-bg);
-            border-radius: 10px;
-            border-bottom: 3px solid var(--primary-blue);
-        }
-
-        .stat-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        /* Sector Grid */
+        /* Enhanced Sector Grid */
         .sectors-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 30px;
-            max-height: calc(100vh - 300px);
+            max-height: calc(100vh - 350px);
             overflow-y: auto;
             padding-right: 10px;
         }
 
-        /* Custom scrollbar for sectors grid */
         .sectors-grid::-webkit-scrollbar {
             width: 8px;
         }
@@ -495,8 +680,8 @@
 
         .sector-card {
             background: var(--white);
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 18px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             border: 2px solid transparent;
             cursor: pointer;
@@ -507,6 +692,11 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+        }
+
+        .sector-card:focus {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
         }
 
         .sector-card.no-data {
@@ -530,40 +720,47 @@
             background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
         }
 
-        .sector-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.15);
+        .sector-card:hover:not(.no-data) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.15);
             border-color: var(--primary-blue);
         }
 
         .sector-header {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
         .sector-icon {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--white);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .sector-info {
+            flex: 1;
+            min-width: 0;
         }
 
         .sector-info h3 {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            line-height: 1.3;
         }
 
         .sector-count {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-light);
         }
 
@@ -571,27 +768,28 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-top: auto;
         }
 
         .sector-investment {
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--primary-green);
         }
 
         .sector-arrow {
             color: var(--primary-blue);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             opacity: 0;
             transition: all 0.3s ease;
         }
 
         .sector-card:hover .sector-arrow {
             opacity: 1;
-            transform: translateX(5px);
+            transform: translateX(3px);
         }
 
-        /* Sector Detail Modal */
+        /* Enhanced Modal */
         .sector-modal {
             position: fixed;
             top: 0;
@@ -614,7 +812,7 @@
             background: var(--white);
             border-radius: 20px;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1000px;
             max-height: 90vh;
             overflow: hidden;
             animation: modalSlideIn 0.3s ease-out;
@@ -634,7 +832,7 @@
         .modal-header {
             background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
             color: var(--white);
-            padding: 25px 30px;
+            padding: 20px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -643,8 +841,8 @@
         .modal-title {
             display: flex;
             align-items: center;
-            gap: 15px;
-            font-size: 1.5rem;
+            gap: 12px;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
             font-weight: 700;
         }
 
@@ -654,50 +852,57 @@
             color: var(--white);
             font-size: 1.5rem;
             cursor: pointer;
-            padding: 5px;
+            padding: 8px;
             border-radius: 50%;
             transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .modal-close:hover {
+        .modal-close:hover,
+        .modal-close:focus {
             background: rgba(255, 255, 255, 0.2);
+            outline: 2px solid white;
         }
 
         .modal-body {
-            padding: 30px;
+            padding: 25px;
             max-height: calc(90vh - 100px);
             overflow-y: auto;
         }
 
         .top-investors-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 20px;
         }
 
         .investor-card {
             background: var(--light-bg);
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 18px;
             border-left: 5px solid var(--primary-blue);
             transition: all 0.3s ease;
         }
 
         .investor-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
         .investor-rank {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 15px;
         }
 
         .rank-number {
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             background: linear-gradient(135deg, var(--accent-gold), #f97316);
             border-radius: 50%;
             display: flex;
@@ -705,7 +910,8 @@
             justify-content: center;
             color: var(--white);
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            flex-shrink: 0;
         }
 
         .rank-number.gold { background: linear-gradient(135deg, #ffd700, #ffb300); }
@@ -713,48 +919,21 @@
         .rank-number.bronze { background: linear-gradient(135deg, #cd7f32, #b8860b); }
 
         .investor-name {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text-dark);
             line-height: 1.3;
-        }
-
-        .investor-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .detail-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-        }
-
-        .detail-icon {
-            color: var(--primary-blue);
-        }
-
-        .investor-investment {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--primary-green);
-            text-align: center;
-            padding: 10px;
-            background: var(--white);
-            border-radius: 10px;
-            margin-top: 10px;
+            flex: 1;
         }
 
         .investor-type {
             display: inline-block;
             padding: 4px 8px;
             border-radius: 6px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             margin-left: auto;
+            flex-shrink: 0;
         }
 
         .investor-type.PMA {
@@ -767,19 +946,216 @@
             color: #166534;
         }
 
-        /* No Data State */
-        .no-data {
+        .investor-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .detail-icon {
+            color: var(--primary-blue);
+            flex-shrink: 0;
+        }
+
+        .investor-investment {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-green);
             text-align: center;
-            padding: 60px 20px;
+            padding: 10px;
+            background: var(--white);
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        /* Enhanced Map Overview */
+        .map-overview-slide {
+            padding: 15px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-light);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .map-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .map-title h2 {
+            font-size: clamp(1.3rem, 4vw, 1.6rem);
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .map-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .map-control-btn {
+            padding: 8px 12px;
+            border: 2px solid var(--primary-blue);
+            background: var(--white);
+            color: var(--primary-blue);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .map-control-btn:hover, 
+        .map-control-btn.active,
+        .map-control-btn:focus {
+            background: var(--primary-blue);
+            color: var(--white);
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+
+        .map-container {
+            flex: 1;
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            min-height: 400px;
+        }
+
+        #presentationMap {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+        }
+
+        .map-legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            min-width: 180px;
+        }
+
+        .legend-title {
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .legend-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+        }
+
+        .legend-marker {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 8px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .legend-marker.ibu-kota {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .legend-marker.kota {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .legend-marker.kabupaten {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .map-stats {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            min-width: 200px;
+        }
+
+        .stats-title {
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .stats-item {
+            text-align: center;
+            padding: 6px;
+            background: var(--light-bg);
+            border-radius: 6px;
+        }
+
+        .stats-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .stats-label {
+            font-size: 0.65rem;
             color: var(--text-light);
         }
 
-        .no-data i {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        /* Navigation Buttons */
+        /* Enhanced Navigation */
         .slide-navigation-bottom {
             position: fixed;
             bottom: 20px;
@@ -805,17 +1181,21 @@
             box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
         }
 
-        .nav-btn:hover {
+        .nav-btn:hover,
+        .nav-btn:focus {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
         }
 
         .nav-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
         }
 
-        /* Progress Bar */
         .progress-bar {
             position: fixed;
             bottom: 0;
@@ -826,178 +1206,58 @@
             z-index: 100;
         }
 
-        /* Map Overview Slide */
-        .map-overview-slide {
-            padding: 20px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .map-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-light);
-        }
-
-        .map-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .map-title h2 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin: 0;
-        }
-
-        .map-controls {
-            display: flex;
-            gap: 10px;
-        }
-
-        .map-control-btn {
-            padding: 8px 12px;
-            border: 2px solid var(--primary-blue);
-            background: var(--white);
-            color: var(--primary-blue);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .map-control-btn:hover, .map-control-btn.active {
-            background: var(--primary-blue);
-            color: var(--white);
-        }
-
-        .map-container {
-            flex: 1;
-            background: var(--white);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            position: relative;
-            min-height: 500px;
-        }
-
-        #presentationMap {
-            width: 100%;
-            height: 100%;
-            min-height: 500px;
-        }
-
-        .map-legend {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            z-index: 1000;
-            min-width: 200px;
-        }
-
-        .legend-title {
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-
-        .legend-items {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.8rem;
-        }
-
-        .legend-marker {
-            width: 20px;
-            height: 20px;
+        .map-nav-button {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            color: white;
+            border: none;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 10px;
-            font-weight: bold;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            z-index: 1001;
         }
 
-        .legend-marker.ibu-kota {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
+        .map-nav-button:hover,
+        .map-nav-button:focus {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            outline: 2px solid white;
+            outline-offset: 2px;
         }
 
-        .legend-marker.kota {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-        }
-
-        .legend-marker.kabupaten {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
-        .map-stats {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            z-index: 1000;
-            min-width: 250px;
-        }
-
-        .stats-title {
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 12px;
-            font-size: 0.9rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .stats-item {
+        /* Enhanced No Data State */
+        .no-data {
             text-align: center;
-            padding: 8px;
-            background: var(--light-bg);
-            border-radius: 6px;
-        }
-
-        .stats-value {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-        }
-
-        .stats-label {
-            font-size: 0.7rem;
+            padding: 40px 20px;
             color: var(--text-light);
         }
 
-        /* Custom Leaflet Popup */
+        .no-data i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .no-data h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .no-data p {
+            font-size: 0.9rem;
+        }
+
+        /* Popup Styles */
         .leaflet-popup-content-wrapper {
             border-radius: 12px !important;
             box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
@@ -1101,8 +1361,10 @@
             color: white;
         }
 
-        .popup-btn.primary:hover {
+        .popup-btn.primary:hover,
+        .popup-btn.primary:focus {
             background: var(--dark-blue);
+            outline: 2px solid var(--primary-blue);
         }
 
         .popup-btn.secondary {
@@ -1110,35 +1372,135 @@
             color: var(--text-dark);
         }
 
-        .popup-btn.secondary:hover {
+        .popup-btn.secondary:hover,
+        .popup-btn.secondary:focus {
             background: var(--border-light);
+            outline: 2px solid var(--border-light);
         }
 
-        /* Map Navigation Button */
-        .map-nav-button {
+        /* Help Modal */
+        .help-modal {
             position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-            z-index: 1001;
+            z-index: 2000;
+            padding: 20px;
         }
 
-        .map-nav-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        .help-modal.active {
+            display: flex;
         }
+
+        .help-content {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .help-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .help-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .help-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .help-close:hover,
+        .help-close:focus {
+            background: var(--hover-bg);
+            color: var(--text-dark);
+            outline: 2px solid var(--primary-blue);
+        }
+
+        .help-section {
+            margin-bottom: 20px;
+        }
+
+        .help-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-shortcuts {
+            display: grid;
+            gap: 8px;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            background: var(--light-bg);
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .shortcut-key {
+            background: var(--white);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: 600;
+            border: 1px solid var(--border-light);
+        }
+
+        /* Enhanced Mobile Responsiveness */
+        @media (max-width: 1200px) {
+            .presentation-header {
+                padding: 12px 15px;
+            }
+            
+            .control-btn {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .slide-navigation {
+                width: 260px;
+            }
+            
+            .sectors-grid {
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            }
+        }
+
         @media (max-width: 1024px) {
             .content-area {
                 flex-direction: column;
@@ -1146,56 +1508,132 @@
             
             .slide-navigation {
                 width: 100%;
-                max-height: 200px;
+                max-height: 180px;
                 order: 2;
+                padding: 15px;
             }
             
             .region-list {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
                 gap: 10px;
+                max-height: 120px;
             }
             
             .sectors-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                max-height: calc(100vh - 350px);
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                max-height: calc(100vh - 400px);
             }
             
             .region-detail-header {
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: center;
+                text-align: center;
                 gap: 15px;
             }
             
             .region-stats-summary {
                 width: 100%;
-                justify-content: space-between;
+                justify-content: center;
+                flex-wrap: wrap;
             }
             
             .sector-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .map-legend,
+            .map-stats {
+                position: relative;
                 width: 100%;
-                justify-content: space-between;
+                margin: 10px 0;
+                order: 3;
+            }
+            
+            .map-container {
+                order: 2;
             }
         }
-        
 
         @media (max-width: 768px) {
             .presentation-header {
-                padding: 15px 20px;
+                padding: 10px 15px;
                 flex-direction: column;
-                gap: 15px;
+                gap: 12px;
+                min-height: auto;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .logo {
+                height: 40px;
             }
             
             .header-right {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .presentation-controls {
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .control-btn {
+                flex: 1;
+                max-width: 120px;
                 justify-content: center;
             }
             
             .slide-content {
-                padding: 20px;
+                padding: 15px;
+            }
+            
+            .slide-navigation {
+                padding: 10px;
+                max-height: 160px;
+            }
+            
+            .region-list {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 8px;
+                max-height: 100px;
+            }
+            
+            .region-item {
+                padding: 10px;
+            }
+            
+            .region-name {
+                font-size: 0.9rem;
+            }
+            
+            .region-stats {
+                flex-direction: column;
+                gap: 4px;
+                font-size: 0.75rem;
             }
             
             .sectors-grid {
                 grid-template-columns: 1fr;
+                gap: 12px;
+                max-height: calc(100vh - 450px);
+            }
+            
+            .sector-card {
+                padding: 15px;
+            }
+            
+            .sector-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
             }
             
             .top-investors-grid {
@@ -1205,16 +1643,203 @@
             .modal-content {
                 margin: 10px;
                 max-height: calc(100vh - 20px);
+                border-radius: 15px;
+            }
+            
+            .modal-header {
+                padding: 15px 20px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .investor-details {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .welcome-slide {
+                padding: 20px 15px;
+                min-height: 400px;
+            }
+            
+            .welcome-instructions {
+                padding: 15px;
+                margin: 0 10px;
+            }
+            
+            .map-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .map-controls {
+                justify-content: center;
+            }
+            
+            .nav-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+            
+            .map-nav-button {
+                width: 50px;
+                height: 50px;
+                bottom: 80px;
+                font-size: 1.3rem;
+            }
+            
+            .slide-navigation-bottom {
+                bottom: 15px;
+                right: 15px;
+                gap: 8px;
             }
         }
 
-        /* Smooth Scrollbar */
+        @media (max-width: 480px) {
+            .presentation-header {
+                padding: 8px 10px;
+            }
+            
+            .slide-content {
+                padding: 10px;
+            }
+            
+            .slide-navigation {
+                padding: 8px;
+                max-height: 140px;
+            }
+            
+            .region-list {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                max-height: 80px;
+            }
+            
+            .region-item {
+                padding: 8px;
+            }
+            
+            .sectors-grid {
+                max-height: calc(100vh - 480px);
+            }
+            
+            .control-btn {
+                padding: 5px 8px;
+                font-size: 0.75rem;
+            }
+            
+            .modal-content {
+                margin: 5px;
+                border-radius: 10px;
+            }
+            
+            .modal-header {
+                padding: 12px 15px;
+            }
+            
+            .modal-body {
+                padding: 15px;
+            }
+            
+            .help-content {
+                margin: 10px;
+                padding: 20px;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .presentation-header,
+            .slide-navigation,
+            .slide-navigation-bottom,
+            .map-nav-button,
+            .progress-bar,
+            .control-btn {
+                display: none !important;
+            }
+            
+            .content-area {
+                flex-direction: column;
+            }
+            
+            .slide-content {
+                padding: 20px;
+            }
+            
+            .slide {
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+            }
+            
+            .sector-card {
+                break-inside: avoid;
+                margin-bottom: 10px;
+            }
+            
+            body {
+                background: white !important;
+            }
+            
+            .modal-content {
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --primary-blue: #0000ee;
+                --primary-green: #008000;
+                --text-dark: #000000;
+                --text-light: #333333;
+                --border-light: #666666;
+            }
+            
+            .sector-card,
+            .region-item,
+            .investor-card {
+                border: 2px solid #000000;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            
+            .spinner {
+                animation: none;
+                border: 4px solid var(--primary-blue);
+            }
+        }
+
+        /* Focus-visible support for better keyboard navigation */
+        .region-item:focus-visible,
+        .sector-card:focus-visible,
+        .control-btn:focus-visible,
+        .nav-btn:focus-visible {
+            outline: 3px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+
+        /* Custom scrollbar for webkit browsers */
         ::-webkit-scrollbar {
             width: 8px;
+            height: 8px;
         }
 
         ::-webkit-scrollbar-track {
             background: var(--light-bg);
+            border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb {
@@ -1225,15 +1850,97 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--dark-blue);
         }
+
+        ::-webkit-scrollbar-corner {
+            background: var(--light-bg);
+        }
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner" role="status" aria-label="Loading"></div>
+        <div class="loading-text">Memuat Dashboard Investasi NTB</div>
+        <div class="loading-subtext">Menyiapkan data dan peta interaktif...</div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="help-modal" id="helpModal" role="dialog" aria-labelledby="helpTitle" aria-modal="true">
+        <div class="help-content">
+            <div class="help-header">
+                <h3 class="help-title" id="helpTitle">
+                    <i class="fas fa-keyboard"></i>
+                    Bantuan & Shortcut
+                </h3>
+                <button class="help-close" onclick="closeHelpModal()" aria-label="Tutup bantuan">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="help-section">
+                <h4><i class="fas fa-mouse"></i> Navigasi</h4>
+                <div class="help-shortcuts">
+                    <div class="shortcut-item">
+                        <span>Slide berikutnya</span>
+                        <span class="shortcut-key">→ atau Space</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Slide sebelumnya</span>
+                        <span class="shortcut-key">←</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Kembali ke beranda</span>
+                        <span class="shortcut-key">Home</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Buka peta NTB</span>
+                        <span class="shortcut-key">M</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="help-section">
+                <h4><i class="fas fa-search"></i> Pencarian</h4>
+                <div class="help-shortcuts">
+                    <div class="shortcut-item">
+                        <span>Fokus ke pencarian</span>
+                        <span class="shortcut-key">/</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Bersihkan pencarian</span>
+                        <span class="shortcut-key">Esc</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="help-section">
+                <h4><i class="fas fa-expand"></i> Tampilan</h4>
+                <div class="help-shortcuts">
+                    <div class="shortcut-item">
+                        <span>Mode fullscreen</span>
+                        <span class="shortcut-key">F11</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Tutup modal</span>
+                        <span class="shortcut-key">Esc</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Bantuan ini</span>
+                        <span class="shortcut-key">F1 atau ?</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="presentation-container">
         <!-- Header -->
-        <div class="presentation-header">
+        <header class="presentation-header">
             <div class="header-left">
                 <div class="logo-container">
-                    <img src="img/dpmptsp-logo.png" alt="" style="height:50px; width:auto; max-width:150px;">
+                    <img src="img/dpmptsp-logo.png" alt="Logo DPMPTSP NTB" class="logo">
                 </div>
                 <div class="title-section">
                     <h1>Dashboard Investasi NTB</h1>
@@ -1241,121 +1948,131 @@
                 </div>
             </div>
             <div class="header-right">
-                <div class="presentation-controls">
-                    <button class="control-btn active" onclick="resetPresentation()">
-                        <i class="fas fa-home"></i> Beranda
+                <nav class="presentation-controls" role="navigation" aria-label="Kontrol presentasi">
+                    <button class="control-btn active" onclick="resetPresentation()" aria-label="Kembali ke beranda">
+                        <i class="fas fa-home" aria-hidden="true"></i> 
+                        <span>Beranda</span>
                     </button>
-                    <button class="control-btn" onclick="showMapOverview()">
-                        <i class="fas fa-map"></i> Peta NTB
+                    <button class="control-btn" onclick="showMapOverview()" aria-label="Tampilkan peta NTB">
+                        <i class="fas fa-map" aria-hidden="true"></i> 
+                        <span>Peta NTB</span>
                     </button>
-                    <button class="control-btn" onclick="toggleFullscreen()">
-                        <i class="fas fa-expand"></i> Fullscreen
+                    <button class="control-btn" onclick="showHelpModal()" aria-label="Tampilkan bantuan">
+                        <i class="fas fa-question-circle" aria-hidden="true"></i> 
+                        <span>Bantuan</span>
                     </button>
-                </div>
+                    <button class="control-btn" onclick="toggleFullscreen()" aria-label="Mode layar penuh">
+                        <i class="fas fa-expand" aria-hidden="true"></i> 
+                        <span>Fullscreen</span>
+                    </button>
+                </nav>
             </div>
-        </div>
+        </header>
 
         <!-- Main Content -->
-        <div class="content-area">
+        <main class="content-area" id="main-content">
             <!-- Region Navigation -->
-            <div class="slide-navigation">
+            <aside class="slide-navigation" role="complementary" aria-label="Navigasi wilayah">
                 <div class="nav-title">
-                    <i class="fas fa-map-marker-alt"></i>
+                    <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
                     Wilayah NTB
                 </div>
                 
                 <!-- Search Box -->
                 <div class="search-container">
-                    <i class="fas fa-search search-icon"></i>
+                    <i class="fas fa-search search-icon" aria-hidden="true"></i>
                     <input 
                         type="text" 
                         class="search-input" 
                         id="regionSearch" 
                         placeholder="Cari wilayah..."
                         autocomplete="off"
+                        aria-label="Cari wilayah di NTB"
+                        role="searchbox"
                     >
-                    <button class="search-clear" id="searchClear" onclick="clearSearch()">
-                        <i class="fas fa-times"></i>
+                    <button class="search-clear" id="searchClear" onclick="clearSearch()" aria-label="Bersihkan pencarian">
+                        <i class="fas fa-times" aria-hidden="true"></i>
                     </button>
                 </div>
                 
-                <div class="region-list" id="regionList">
+                <nav class="region-list" id="regionList" role="navigation" aria-label="Daftar wilayah NTB">
                     <!-- Regions will be populated by JavaScript -->
-                </div>
+                </nav>
                 
                 <!-- No Results Message -->
-                <div class="no-results" id="noResults">
-                    <i class="fas fa-search"></i>
+                <div class="no-results" id="noResults" role="status" aria-live="polite">
+                    <i class="fas fa-search" aria-hidden="true"></i>
                     <div>Tidak ada wilayah yang ditemukan</div>
                     <small>Coba kata kunci lain</small>
                 </div>
-            </div>
+            </aside>
 
             <!-- Slide Content -->
-            <div class="slide-content">
+            <main class="slide-content" role="main">
                 <!-- Welcome Slide -->
-                <div class="slide active" id="welcomeSlide">
+                <section class="slide active" id="welcomeSlide" aria-labelledby="welcome-title">
                     <div class="welcome-slide">
-                        <div class="welcome-icon">
+                        <div class="welcome-icon" aria-hidden="true">
                             <i class="fas fa-presentation"></i>
                         </div>
-                        <h1 class="welcome-title">Presentasi Investasi NTB</h1>
+                        <h1 class="welcome-title" id="welcome-title">Presentasi Investasi NTB</h1>
                         <p class="welcome-subtitle">
                             Jelajahi data investasi real-time dari 10 kabupaten/kota di Nusa Tenggara Barat 
                             dengan detail 16 sektor ekonomi dan profil investor terkemuka.
                         </p>
                         <div class="welcome-instructions">
-                            <h3><i class="fas fa-info-circle"></i> Cara Penggunaan</h3>
+                            <h3><i class="fas fa-info-circle" aria-hidden="true"></i> Cara Penggunaan</h3>
                             <p>
                                 • Pilih wilayah di panel kiri untuk melihat detail investasi<br>
                                 • Klik sektor untuk melihat top 10 investor terbesar<br>
                                 • Tekan "/" untuk fokus ke pencarian wilayah<br>
                                 • Gunakan tombol navigasi untuk berpindah antar slide<br>
                                 • Klik fullscreen untuk pengalaman presentasi optimal<br>
-                                • Klik "Peta NTB" untuk melihat overview geografis
+                                • Klik "Peta NTB" untuk melihat overview geografis<br>
+                                • Tekan F1 atau ? untuk melihat bantuan lengkap
                             </p>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 <!-- Map Overview Slide -->
-                <div class="slide" id="mapOverviewSlide">
+                <section class="slide" id="mapOverviewSlide" aria-labelledby="map-title">
                     <div class="map-overview-slide">
                         <div class="map-header">
                             <div class="map-title">
-                                <i class="fas fa-map-marked-alt"></i>
-                                <h2>Peta Investasi NTB</h2>
+                                <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                                <h2 id="map-title">Peta Investasi NTB</h2>
                             </div>
                             <div class="map-controls">
-                                <button class="map-control-btn active" onclick="resetMapView()">
-                                    <i class="fas fa-home"></i> Reset View
+                                <button class="map-control-btn active" onclick="resetMapView()" aria-label="Reset tampilan peta">
+                                    <i class="fas fa-home" aria-hidden="true"></i> Reset View
                                 </button>
-                                <button class="map-control-btn" onclick="toggleMapFullscreen()">
-                                    <i class="fas fa-expand"></i> Fullscreen Map
+                                <button class="map-control-btn" onclick="toggleMapFullscreen()" aria-label="Peta layar penuh">
+                                    <i class="fas fa-expand" aria-hidden="true"></i> Fullscreen Map
                                 </button>
                             </div>
                         </div>
                         <div class="map-container">
-                            <div id="presentationMap"></div>
+                            <div id="presentationMap" role="img" aria-label="Peta interaktif investasi NTB"></div>
                             
                             <!-- Map Legend -->
-                            <div class="map-legend">
+                            <div class="map-legend" role="legend" aria-label="Keterangan peta">
                                 <div class="legend-title">Keterangan</div>
                                 <div class="legend-items">
                                     <div class="legend-item">
-                                        <div class="legend-marker ibu-kota">
+                                        <div class="legend-marker ibu-kota" aria-hidden="true">
                                             <i class="fas fa-star"></i>
                                         </div>
                                         <span>Ibu Kota Provinsi</span>
                                     </div>
                                     <div class="legend-item">
-                                        <div class="legend-marker kota">
+                                        <div class="legend-marker kota" aria-hidden="true">
                                             <i class="fas fa-building"></i>
                                         </div>
                                         <span>Kota</span>
                                     </div>
                                     <div class="legend-item">
-                                        <div class="legend-marker kabupaten">
+                                        <div class="legend-marker kabupaten" aria-hidden="true">
                                             <i class="fas fa-mountain"></i>
                                         </div>
                                         <span>Kabupaten</span>
@@ -1364,7 +2081,7 @@
                             </div>
 
                             <!-- Map Stats -->
-                            <div class="map-stats">
+                            <div class="map-stats" role="region" aria-label="Statistik investasi">
                                 <div class="stats-title">Statistik Investasi</div>
                                 <div class="stats-grid">
                                     <div class="stats-item">
@@ -1385,25 +2102,40 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Error State for Map -->
+                            <div class="error-state" id="mapError">
+                                <div class="error-icon">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                </div>
+                                <div class="error-title">Gagal Memuat Peta</div>
+                                <div class="error-message">
+                                    Terjadi kesalahan saat memuat peta interaktif. 
+                                    Silakan coba muat ulang atau periksa koneksi internet Anda.
+                                </div>
+                                <button class="retry-btn" onclick="retryMapLoad()" aria-label="Coba muat ulang peta">
+                                    <i class="fas fa-redo"></i> Muat Ulang Peta
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 <!-- Region Detail Slides will be populated by JavaScript -->
-            </div>
-        </div>
+            </main>
+        </main>
     </div>
 
     <!-- Sector Detail Modal -->
-    <div class="sector-modal" id="sectorModal">
+    <div class="sector-modal" id="sectorModal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title" id="modalTitle">
-                    <i class="fas fa-industry"></i>
+                <h2 class="modal-title" id="modalTitle">
+                    <i class="fas fa-industry" aria-hidden="true"></i>
                     <span>Detail Sektor</span>
-                </div>
-                <button class="modal-close" onclick="closeSectorModal()">
-                    <i class="fas fa-times"></i>
+                </h2>
+                <button class="modal-close" onclick="closeSectorModal()" aria-label="Tutup modal detail sektor">
+                    <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
             </div>
             <div class="modal-body" id="modalBody">
@@ -1413,27 +2145,46 @@
     </div>
 
     <!-- Navigation Buttons -->
-    <div class="slide-navigation-bottom">
-        <button class="nav-btn" id="prevBtn" onclick="previousSlide()" disabled>
-            <i class="fas fa-chevron-left"></i>
+    <nav class="slide-navigation-bottom" role="navigation" aria-label="Navigasi slide">
+        <button class="nav-btn" id="prevBtn" onclick="previousSlide()" disabled aria-label="Slide sebelumnya">
+            <i class="fas fa-chevron-left" aria-hidden="true"></i>
         </button>
-        <button class="nav-btn" id="nextBtn" onclick="nextSlide()">
-            <i class="fas fa-chevron-right"></i>
+        <button class="nav-btn" id="nextBtn" onclick="nextSlide()" aria-label="Slide berikutnya">
+            <i class="fas fa-chevron-right" aria-hidden="true"></i>
         </button>
-    </div>
+    </nav>
 
     <!-- Map Navigation Button -->
-    <button class="map-nav-button" id="mapNavButton" onclick="showMapOverview()" title="Lihat Peta NTB">
-        <i class="fas fa-map-marked-alt"></i>
+    <button class="map-nav-button" id="mapNavButton" onclick="showMapOverview()" aria-label="Lihat Peta NTB">
+        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
     </button>
 
     <!-- Progress Bar -->
-    <div class="progress-bar" id="progressBar"></div>
+    <div class="progress-bar" id="progressBar" role="progressbar" aria-label="Progress presentasi"></div>
 
     <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
+        // Enhanced global variables and error handling
+        let presentationMap = null;
+        let markersLayer = null;
+        let currentSlide = 0;
+        let totalSlides = 0;
+        let isMapInitialized = false;
+        let mapInitRetries = 0;
+        const MAX_MAP_RETRIES = 3;
+        const MAP_INIT_DELAY = 1000;
+        
+        // Performance monitoring
+        const performanceMetrics = {
+            initStart: performance.now(),
+            mapLoadStart: null,
+            mapLoadEnd: null,
+            dataLoadStart: null,
+            dataLoadEnd: null
+        };
+
         // Data investasi berdasarkan file yang diberikan
         const investmentData = {
             "Mataram": {
@@ -1994,12 +2745,9 @@
             "Kota Bima": [118.7267, -8.4600]
         };
 
-        let currentSlide = 0;
-        let totalSlides = 0;
-        let presentationMap = null;
-        let markersLayer = null;
         const regions = Object.keys(investmentData);
 
+        // Enhanced utility functions
         function formatCurrency(value) {
             const numValue = parseInt(value);
             if (isNaN(numValue)) return 'Rp 0';
@@ -2016,50 +2764,322 @@
             return `Rp ${numValue.toLocaleString('id-ID')}`;
         }
 
-        function initializePresentation() {
-            populateRegionList();
-            createRegionSlides();
-            initializeMap();
-            updateMapStats();
-            updateProgress();
-            updateNavigationButtons();
+        // Enhanced error handling utilities
+        function logError(context, error, data = {}) {
+            console.error(`[${context}] Error:`, error, data);
+            
+            // Could send to monitoring service in production
+            if (window.analytics) {
+                window.analytics.track('error', {
+                    context,
+                    error: error.message,
+                    stack: error.stack,
+                    ...data
+                });
+            }
         }
 
-        function initializeMap() {
-            // Check if map container exists
-            const mapContainer = document.getElementById('presentationMap');
-            if (!mapContainer) {
-                console.error('Map container not found');
+        function showErrorState(containerId, message, retryCallback = null) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const errorHtml = `
+                <div class="error-state show">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="error-title">Terjadi Kesalahan</div>
+                    <div class="error-message">${message}</div>
+                    ${retryCallback ? `<button class="retry-btn" onclick="${retryCallback}()">Coba Lagi</button>` : ''}
+                </div>
+            `;
+            
+            container.innerHTML = errorHtml;
+        }
+
+        function hideLoadingOverlay() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.add('hidden');
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        // Enhanced search with debouncing
+        let searchTimeout;
+        function debounceSearch(func, delay = 300) {
+            return function(...args) {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        // Keyboard navigation and accessibility
+        function handleKeyboardNavigation(event) {
+            // Don't interfere with search input or modal inputs
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+                if (event.target.id !== 'regionSearch') {
+                    return;
+                }
+            }
+
+            // Don't interfere when modals are open
+            if (document.querySelector('.sector-modal.active') || document.querySelector('.help-modal.active')) {
                 return;
             }
 
-            try {
-                // Initialize map centered on NTB
-                presentationMap = L.map('presentationMap', {
-                    zoomControl: false,
-                    minZoom: 7,
-                    maxZoom: 12
-                }).setView([-8.6500, 117.3616], 8);
-
-                // Add tile layer
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '© OpenStreetMap contributors | Data: DPMPTSP NTB'
-                }).addTo(presentationMap);
-
-                // Add zoom control to bottom right
-                L.control.zoom({
-                    position: 'bottomright'
-                }).addTo(presentationMap);
-
-                // Create markers layer
-                markersLayer = L.layerGroup().addTo(presentationMap);
-
-                // Add markers for each region
-                addRegionMarkers();
-            } catch (error) {
-                console.error('Error initializing map:', error);
+            switch(event.key) {
+                case 'ArrowRight':
+                case ' ':
+                    event.preventDefault();
+                    nextSlide();
+                    break;
+                case 'ArrowLeft':
+                    event.preventDefault();
+                    previousSlide();
+                    break;
+                case 'Home':
+                    event.preventDefault();
+                    resetPresentation();
+                    break;
+                case 'Escape':
+                    event.preventDefault();
+                    closeSectorModal();
+                    closeHelpModal();
+                    closeMapPopups();
+                    clearSearch();
+                    break;
+                case 'F11':
+                    event.preventDefault();
+                    toggleFullscreen();
+                    break;
+                case 'F1':
+                case '?':
+                    event.preventDefault();
+                    showHelpModal();
+                    break;
+                case 'M':
+                case 'm':
+                    if (!event.target.matches('input, textarea')) {
+                        event.preventDefault();
+                        showMapOverview();
+                    }
+                    break;
+                case '/':
+                    if (!event.target.matches('input, textarea')) {
+                        event.preventDefault();
+                        const searchInput = document.getElementById('regionSearch');
+                        if (searchInput) {
+                            searchInput.focus();
+                            searchInput.select();
+                        }
+                    }
+                    break;
+                case 'Enter':
+                    if (event.target.classList.contains('region-item')) {
+                        event.target.click();
+                    } else if (event.target.classList.contains('sector-card') && !event.target.classList.contains('no-data')) {
+                        event.target.click();
+                    }
+                    break;
             }
+        }
+
+        // Enhanced initialization with error handling
+        async function initializePresentation() {
+            try {
+                performanceMetrics.dataLoadStart = performance.now();
+                
+                // Validate data first
+                if (!validateData()) {
+                    throw new Error('Data validation failed');
+                }
+
+                // Initialize UI components
+                await populateRegionList();
+                await createRegionSlides();
+                updateMapStats();
+                updateProgress();
+                updateNavigationButtons();
+                initializeSearch();
+                
+                performanceMetrics.dataLoadEnd = performance.now();
+                
+                // Initialize map with delay for better UX
+                setTimeout(() => {
+                    initializeMapWithRetry();
+                }, 500);
+                
+                // Hide loading overlay
+                setTimeout(hideLoadingOverlay, 1000);
+                
+                console.log('Presentation initialized successfully');
+                console.log('Performance metrics:', {
+                    totalInit: performanceMetrics.dataLoadEnd - performanceMetrics.initStart,
+                    dataLoad: performanceMetrics.dataLoadEnd - performanceMetrics.dataLoadStart
+                });
+                
+            } catch (error) {
+                logError('initializePresentation', error);
+                hideLoadingOverlay();
+                showErrorState('main-content', 'Gagal memuat dashboard. Silakan refresh halaman.', 'location.reload');
+            }
+        }
+
+        // Data validation
+        function validateData() {
+            try {
+                if (!investmentData || typeof investmentData !== 'object') {
+                    throw new Error('Invalid investment data structure');
+                }
+
+                const requiredFields = ['name', 'type', 'population', 'totalInvestment', 'totalCompanies', 'sectors'];
+                
+                for (const regionKey of Object.keys(investmentData)) {
+                    const region = investmentData[regionKey];
+                    
+                    for (const field of requiredFields) {
+                        if (!(field in region)) {
+                            throw new Error(`Missing field ${field} in region ${regionKey}`);
+                        }
+                    }
+                    
+                    if (!regionCoordinates[regionKey]) {
+                        console.warn(`Missing coordinates for region: ${regionKey}`);
+                    }
+                }
+                
+                return true;
+            } catch (error) {
+                logError('validateData', error);
+                return false;
+            }
+        }
+
+        // Enhanced map initialization with retry logic
+        async function initializeMapWithRetry() {
+            if (isMapInitialized) return;
+            
+            try {
+                performanceMetrics.mapLoadStart = performance.now();
+                await initializeMap();
+                isMapInitialized = true;
+                performanceMetrics.mapLoadEnd = performance.now();
+                
+                console.log('Map load time:', performanceMetrics.mapLoadEnd - performanceMetrics.mapLoadStart, 'ms');
+                
+            } catch (error) {
+                logError('initializeMap', error, { retry: mapInitRetries });
+                
+                if (mapInitRetries < MAX_MAP_RETRIES) {
+                    mapInitRetries++;
+                    console.log(`Retrying map initialization (${mapInitRetries}/${MAX_MAP_RETRIES})`);
+                    setTimeout(() => initializeMapWithRetry(), MAP_INIT_DELAY * mapInitRetries);
+                } else {
+                    console.error('Max map initialization retries reached');
+                    showMapError();
+                }
+            }
+        }
+
+        function initializeMap() {
+            return new Promise((resolve, reject) => {
+                try {
+                    const mapContainer = document.getElementById('presentationMap');
+                    if (!mapContainer) {
+                        throw new Error('Map container not found');
+                    }
+
+                    // Check if Leaflet is loaded
+                    if (typeof L === 'undefined') {
+                        throw new Error('Leaflet library not loaded');
+                    }
+
+                    // Initialize map centered on NTB
+                    presentationMap = L.map('presentationMap', {
+                        zoomControl: false,
+                        minZoom: 7,
+                        maxZoom: 12,
+                        attributionControl: true
+                    }).setView([-8.6500, 117.3616], 8);
+
+                    // Add tile layer with error handling
+                    const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '© OpenStreetMap contributors | Data: DPMPTSP NTB',
+                        errorTileUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0iI2Y1ZjVmNSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5UaWxlIEVycm9yPC90ZXh0Pjwvc3ZnPg=='
+                    });
+
+                    tileLayer.on('tileerror', (e) => {
+                        console.warn('Tile load error:', e);
+                    });
+
+                    presentationMap.addLayer(tileLayer);
+
+                    // Add zoom control to bottom right
+                    L.control.zoom({
+                        position: 'bottomright'
+                    }).addTo(presentationMap);
+
+                    // Create markers layer
+                    markersLayer = L.layerGroup().addTo(presentationMap);
+
+                    // Add markers for each region
+                    addRegionMarkers();
+
+                    // Map event handlers
+                    presentationMap.on('zoomend moveend', () => {
+                        // Optional: Update map stats based on visible area
+                    });
+
+                    presentationMap.on('error', (e) => {
+                        throw new Error(`Map error: ${e.message}`);
+                    });
+
+                    resolve();
+                    
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+
+        function showMapError() {
+            const mapError = document.getElementById('mapError');
+            const mapContainer = document.querySelector('#presentationMap');
+            
+            if (mapError && mapContainer) {
+                mapContainer.style.display = 'none';
+                mapError.classList.add('show');
+            }
+        }
+
+        function retryMapLoad() {
+            const mapError = document.getElementById('mapError');
+            const mapContainer = document.querySelector('#presentationMap');
+            
+            if (mapError && mapContainer) {
+                mapError.classList.remove('show');
+                mapContainer.style.display = 'block';
+            }
+            
+            mapInitRetries = 0;
+            isMapInitialized = false;
+            
+            // Cleanup existing map
+            if (presentationMap) {
+                try {
+                    presentationMap.remove();
+                    presentationMap = null;
+                    markersLayer = null;
+                } catch (e) {
+                    console.warn('Error cleaning up map:', e);
+                }
+            }
+            
+            initializeMapWithRetry();
         }
 
         function addRegionMarkers() {
@@ -2183,7 +3203,7 @@
 
                     markersLayer.addLayer(marker);
                 } catch (error) {
-                    console.error(`Error creating marker for ${regionKey}:`, error);
+                    logError(`createMarker-${regionKey}`, error);
                 }
             });
         }
@@ -2217,10 +3237,10 @@
                             </div>
                         </div>
                         <div class="popup-actions">
-                            <button class="popup-btn primary" onclick="goToRegionDetail('${regionKey}'); event.stopPropagation();">
+                            <button class="popup-btn primary" onclick="goToRegionDetail('${regionKey}'); event.stopPropagation();" aria-label="Lihat detail ${region.name}">
                                 <i class="fas fa-chart-bar"></i> Detail
                             </button>
-                            <button class="popup-btn secondary" onclick="closeMapPopups(); event.stopPropagation();">
+                            <button class="popup-btn secondary" onclick="closeMapPopups(); event.stopPropagation();" aria-label="Tutup popup">
                                 <i class="fas fa-times"></i> Tutup
                             </button>
                         </div>
@@ -2242,430 +3262,351 @@
                 if (mapTotalCompanies) mapTotalCompanies.textContent = totalCompanies;
                 if (mapTotalInvestment) mapTotalInvestment.textContent = formatCurrency(totalInvestment);
             } catch (error) {
-                console.error('Error updating map stats:', error);
+                logError('updateMapStats', error);
             }
         }
 
-        function showMapOverview() {
-            showRegionSlide('map');
-            
-            // Refresh map size after showing
-            setTimeout(() => {
-                if (presentationMap) {
-                    try {
-                        presentationMap.invalidateSize();
-                        presentationMap.setView([-8.6500, 117.3616], 8);
-                    } catch (error) {
-                        console.error('Error refreshing map:', error);
-                    }
-                }
-            }, 300);
-        }
+        // Enhanced region list population
+        async function populateRegionList() {
+            try {
+                const regionList = document.getElementById('regionList');
+                if (!regionList) throw new Error('Region list container not found');
+                
+                regionList.innerHTML = '';
 
-        function resetMapView() {
-            if (presentationMap) {
-                try {
-                    presentationMap.setView([-8.6500, 117.3616], 8);
-                    closeMapPopups();
-                } catch (error) {
-                    console.error('Error resetting map view:', error);
-                }
-            }
-        }
-
-        function toggleMapFullscreen() {
-            const mapContainer = document.querySelector('.map-container');
-            if (mapContainer && mapContainer.requestFullscreen) {
-                mapContainer.requestFullscreen();
-                setTimeout(() => {
-                    if (presentationMap) {
-                        try {
-                            presentationMap.invalidateSize();
-                        } catch (error) {
-                            console.error('Error invalidating map size:', error);
-                        }
-                    }
-                }, 100);
-            }
-        }
-
-        function goToRegionDetail(regionKey) {
-            const slideIndex = regions.indexOf(regionKey) + 2; // +2 for welcome and map slides
-            if (slideIndex >= 2) {
-                showRegionSlide(slideIndex);
-                updateActiveRegion(regionKey);
-                closeMapPopups();
-            }
-        }
-
-        function closeMapPopups() {
-            if (presentationMap) {
-                try {
-                    presentationMap.closePopup();
-                    presentationMap.eachLayer(function(layer) {
-                        if (layer.closePopup) {
-                            layer.closePopup();
-                        }
-                        if (layer.closeTooltip) {
-                            layer.closeTooltip();
+                regions.forEach((regionKey, index) => {
+                    const region = investmentData[regionKey];
+                    const regionItem = document.createElement('div');
+                    regionItem.className = 'region-item';
+                    regionItem.setAttribute('data-region', regionKey);
+                    regionItem.setAttribute('data-slide', index + 2); // +2 for welcome and map slides
+                    regionItem.setAttribute('data-search', region.name.toLowerCase());
+                    regionItem.setAttribute('tabindex', '0');
+                    regionItem.setAttribute('role', 'button');
+                    regionItem.setAttribute('aria-label', `Lihat detail investasi ${region.name}`);
+                    
+                    regionItem.innerHTML = `
+                        <div class="region-name">${region.name}</div>
+                        <div class="region-stats">
+                            <span>${region.totalCompanies} Perusahaan</span>
+                            <span class="region-investment">${formatCurrency(region.totalInvestment)}</span>
+                        </div>
+                    `;
+                    
+                    regionItem.addEventListener('click', () => {
+                        showRegionSlide(index + 2);
+                        updateActiveRegion(regionKey);
+                    });
+                    
+                    regionItem.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            regionItem.click();
                         }
                     });
-                } catch (error) {
-                    console.error('Error closing map popups:', error);
-                }
+                    
+                    regionList.appendChild(regionItem);
+                });
+                
+                totalSlides = regions.length + 2; // +2 for welcome and map slides
+                
+            } catch (error) {
+                logError('populateRegionList', error);
+                throw error;
             }
         }
 
-        function populateRegionList() {
-            const regionList = document.getElementById('regionList');
-            regionList.innerHTML = '';
-
-            regions.forEach((regionKey, index) => {
-                const region = investmentData[regionKey];
-                const regionItem = document.createElement('div');
-                regionItem.className = 'region-item';
-                regionItem.setAttribute('data-region', regionKey);
-                regionItem.setAttribute('data-slide', index + 2); // +2 for welcome and map slides
-                regionItem.setAttribute('data-search', region.name.toLowerCase()); // For search functionality
+        // Enhanced search initialization
+        function initializeSearch() {
+            try {
+                const searchInput = document.getElementById('regionSearch');
+                const searchClear = document.getElementById('searchClear');
                 
-                regionItem.innerHTML = `
-                    <div class="region-name">${region.name}</div>
-                    <div class="region-stats">
-                        <span>${region.totalCompanies} Perusahaan</span>
-                        <span class="region-investment">${formatCurrency(region.totalInvestment)}</span>
-                    </div>
-                `;
+                if (!searchInput || !searchClear) return;
                 
-                regionItem.addEventListener('click', () => {
-                    showRegionSlide(index + 2); // +2 for welcome and map slides
-                    updateActiveRegion(regionKey);
+                const debouncedFilter = debounceSearch(filterRegions);
+                
+                searchInput.addEventListener('input', function(e) {
+                    const query = e.target.value.toLowerCase().trim();
+                    
+                    if (query.length > 0) {
+                        searchClear.classList.add('show');
+                        debouncedFilter(query);
+                    } else {
+                        searchClear.classList.remove('show');
+                        showAllRegions();
+                    }
                 });
                 
-                regionList.appendChild(regionItem);
-            });
-            
-            totalSlides = regions.length + 2; // +2 for welcome and map slides
-            
-            // Initialize search functionality
-            initializeSearch();
-        }
-
-        function initializeSearch() {
-            const searchInput = document.getElementById('regionSearch');
-            const searchClear = document.getElementById('searchClear');
-            
-            if (!searchInput || !searchClear) return;
-            
-            searchInput.addEventListener('input', function(e) {
-                const query = e.target.value.toLowerCase().trim();
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        clearSearch();
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        const firstVisibleRegion = document.querySelector('.region-item:not(.hidden)');
+                        if (firstVisibleRegion) {
+                            firstVisibleRegion.focus();
+                        }
+                    }
+                });
                 
-                if (query.length > 0) {
-                    searchClear.classList.add('show');
-                    filterRegions(query);
-                } else {
-                    searchClear.classList.remove('show');
-                    showAllRegions();
-                }
-            });
-            
-            searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    clearSearch();
-                }
-            });
+                // Add ARIA live region for search results
+                const searchResults = document.createElement('div');
+                searchResults.id = 'searchResults';
+                searchResults.setAttribute('aria-live', 'polite');
+                searchResults.setAttribute('aria-atomic', 'true');
+                searchResults.style.position = 'absolute';
+                searchResults.style.left = '-9999px';
+                document.body.appendChild(searchResults);
+                
+            } catch (error) {
+                logError('initializeSearch', error);
+            }
         }
 
         function filterRegions(query) {
-            const regionItems = document.querySelectorAll('.region-item');
-            const noResults = document.getElementById('noResults');
-            let visibleCount = 0;
-            
-            regionItems.forEach(item => {
-                const searchText = item.getAttribute('data-search');
-                const regionName = item.querySelector('.region-name').textContent.toLowerCase();
+            try {
+                const regionItems = document.querySelectorAll('.region-item');
+                const noResults = document.getElementById('noResults');
+                const searchResults = document.getElementById('searchResults');
+                let visibleCount = 0;
                 
-                if (searchText.includes(query) || regionName.includes(query)) {
-                    item.classList.remove('hidden');
-                    visibleCount++;
+                regionItems.forEach(item => {
+                    const searchText = item.getAttribute('data-search');
+                    const regionName = item.querySelector('.region-name').textContent.toLowerCase();
+                    
+                    if (searchText.includes(query) || regionName.includes(query)) {
+                        item.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+                
+                if (visibleCount === 0) {
+                    noResults.classList.add('show');
+                    if (searchResults) {
+                        searchResults.textContent = 'Tidak ada wilayah yang ditemukan';
+                    }
                 } else {
-                    item.classList.add('hidden');
+                    noResults.classList.remove('show');
+                    if (searchResults) {
+                        searchResults.textContent = `${visibleCount} wilayah ditemukan`;
+                    }
                 }
-            });
-            
-            if (visibleCount === 0) {
-                noResults.classList.add('show');
-            } else {
-                noResults.classList.remove('show');
+            } catch (error) {
+                logError('filterRegions', error);
             }
         }
 
         function showAllRegions() {
-            const regionItems = document.querySelectorAll('.region-item');
-            const noResults = document.getElementById('noResults');
-            
-            regionItems.forEach(item => {
-                item.classList.remove('hidden');
-            });
-            
-            noResults.classList.remove('show');
+            try {
+                const regionItems = document.querySelectorAll('.region-item');
+                const noResults = document.getElementById('noResults');
+                const searchResults = document.getElementById('searchResults');
+                
+                regionItems.forEach(item => {
+                    item.classList.remove('hidden');
+                });
+                
+                noResults.classList.remove('show');
+                if (searchResults) {
+                    searchResults.textContent = '';
+                }
+            } catch (error) {
+                logError('showAllRegions', error);
+            }
         }
 
         function clearSearch() {
-            const searchInput = document.getElementById('regionSearch');
-            const searchClear = document.getElementById('searchClear');
-            
-            if (searchInput) {
-                searchInput.value = '';
-                searchInput.focus();
-            }
-            
-            if (searchClear) {
-                searchClear.classList.remove('show');
-            }
-            
-            showAllRegions();
-        }
-
-        function toggleSectorFilter(regionKey, slideIndex) {
-            const toggle = document.getElementById(`toggleSector-${slideIndex}`);
-            const grid = document.getElementById(`sectorsGrid-${slideIndex}`);
-            const countInfo = document.getElementById(`sectorCount-${slideIndex}`);
-            
-            if (!toggle || !grid || !countInfo) return;
-            
-            const isActive = toggle.classList.contains('active');
-            const region = investmentData[regionKey];
-            const activeSectors = Object.keys(region.sectors).length;
-            
-            if (isActive) {
-                // Show all sectors
-                toggle.classList.remove('active');
-                toggle.querySelector('span').textContent = 'Hanya Sektor Aktif';
+            try {
+                const searchInput = document.getElementById('regionSearch');
+                const searchClear = document.getElementById('searchClear');
                 
-                const cards = grid.querySelectorAll('.sector-card');
-                cards.forEach(card => {
-                    card.style.display = 'flex';
-                });
+                if (searchInput) {
+                    searchInput.value = '';
+                    searchInput.focus();
+                }
                 
-                countInfo.textContent = `Menampilkan ${allSectors.length} dari ${allSectors.length} sektor`;
-            } else {
-                // Show only active sectors
-                toggle.classList.add('active');
-                toggle.querySelector('span').textContent = 'Semua Sektor';
+                if (searchClear) {
+                    searchClear.classList.remove('show');
+                }
                 
-                const cards = grid.querySelectorAll('.sector-card');
-                cards.forEach(card => {
-                    const hasData = card.getAttribute('data-has-data') === 'true';
-                    card.style.display = hasData ? 'flex' : 'none';
-                });
-                
-                countInfo.textContent = `Menampilkan ${activeSectors} dari ${allSectors.length} sektor`;
+                showAllRegions();
+            } catch (error) {
+                logError('clearSearch', error);
             }
         }
 
-        function createRegionSlides() {
-            const slideContent = document.querySelector('.slide-content');
-            
-            regions.forEach((regionKey, index) => {
+        // Help modal functions
+        function showHelpModal() {
+            const helpModal = document.getElementById('helpModal');
+            if (helpModal) {
+                helpModal.classList.add('active');
+                
+                // Focus management
+                const helpClose = helpModal.querySelector('.help-close');
+                if (helpClose) {
+                    helpClose.focus();
+                }
+                
+                // Trap focus within modal
+                trapFocus(helpModal);
+            }
+        }
+
+        function closeHelpModal() {
+            const helpModal = document.getElementById('helpModal');
+            if (helpModal) {
+                helpModal.classList.remove('active');
+            }
+        }
+
+        // Enhanced modal functions with focus management
+        function trapFocus(element) {
+            const focusableElements = element.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstFocusable = focusableElements[0];
+            const lastFocusable = focusableElements[focusableElements.length - 1];
+
+            element.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey) {
+                        if (document.activeElement === firstFocusable) {
+                            e.preventDefault();
+                            lastFocusable.focus();
+                        }
+                    } else {
+                        if (document.activeElement === lastFocusable) {
+                            e.preventDefault();
+                            firstFocusable.focus();
+                        }
+                    }
+                }
+            });
+        }
+
+        // Enhanced sector modal functions
+        function showSectorDetail(sectorName, regionKey) {
+            try {
                 const region = investmentData[regionKey];
-                const slide = document.createElement('div');
-                slide.className = 'slide';
-                slide.id = `slide-${index + 1}`;
+                const sectorData = region.sectors[sectorName] || [];
                 
-                // Get sectors for this region
-                const regionSectors = Object.keys(region.sectors);
+                if (sectorData.length === 0) return;
                 
-                // Create sector cards with data from the region
-                const sectorCards = allSectors.map(sector => {
-                    const hasData = regionSectors.includes(sector.name);
-                    const sectorData = hasData ? region.sectors[sector.name] : [];
-                    const totalInvestment = sectorData.reduce((sum, investor) => sum + investor.investment, 0);
+                // Sort by investment amount
+                const sortedInvestors = [...sectorData].sort((a, b) => b.investment - a.investment);
+                
+                const modal = document.getElementById('sectorModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalBody = document.getElementById('modalBody');
+                
+                if (!modal || !modalTitle || !modalBody) return;
+                
+                const sectorIcon = allSectors.find(s => s.name === sectorName)?.icon || 'fa-chart-line';
+                
+                modalTitle.innerHTML = `
+                    <i class="fas ${sectorIcon}" aria-hidden="true"></i>
+                    <span>${sectorName} - ${region.name}</span>
+                `;
+                
+                const investorCards = sortedInvestors.map((investor, index) => {
+                    const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
                     
                     return `
-                        <div class="sector-card ${hasData ? '' : 'no-data'}" 
-                             data-has-data="${hasData}"
-                             onclick="${hasData ? `showSectorDetail('${sector.name}', '${regionKey}')` : ''}">
-                            <div class="sector-header">
-                                <div class="sector-icon">
-                                    <i class="fas ${sector.icon}"></i>
+                        <article class="investor-card">
+                            <div class="investor-rank">
+                                <div class="rank-number ${rankClass}" aria-label="Peringkat ${index + 1}">${index + 1}</div>
+                                <div class="investor-name">${investor.name}</div>
+                                <div class="investor-type ${investor.type}">${investor.type}</div>
+                            </div>
+                            <div class="investor-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt detail-icon" aria-hidden="true"></i>
+                                    <span>${investor.district}</span>
                                 </div>
-                                <div class="sector-info">
-                                    <h3>${sector.name}</h3>
-                                    <div class="sector-count">
-                                        ${hasData ? `${sectorData.length} Investor` : 'Tidak ada data'}
-                                    </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-code detail-icon" aria-hidden="true"></i>
+                                    <span>KBLI: ${investor.kbli}</span>
                                 </div>
                             </div>
-                            <div class="sector-stats">
-                                <div class="sector-investment">
-                                    ${hasData ? formatCurrency(totalInvestment) : '-'}
-                                </div>
-                                <div class="sector-arrow">
-                                    <i class="fas fa-chevron-right"></i>
-                                </div>
+                            <div class="investor-investment">${formatCurrency(investor.investment)}</div>
+                            <div style="margin-top: 10px; padding: 10px; background: var(--light-bg); border-radius: 8px; font-size: 0.85rem; color: var(--text-light);">
+                                ${investor.description}
                             </div>
-                        </div>
+                        </article>
                     `;
                 }).join('');
                 
-                slide.innerHTML = `
-                    <div class="region-detail-header">
-                        <div class="region-detail-title">
-                            <div class="region-icon">
-                                <i class="fas ${region.type === 'Ibu Kota' ? 'fa-star' : region.type === 'Kota' ? 'fa-building' : 'fa-mountain'}"></i>
-                            </div>
-                            <div class="region-title-text">
-                                <h2>${region.name}</h2>
-                                <p>${region.type} • Populasi: ${region.population} jiwa</p>
-                            </div>
-                        </div>
-                        <div class="region-stats-summary">
-                            <div class="stat-item">
-                                <div class="stat-value">${region.totalCompanies}</div>
-                                <div class="stat-label">Perusahaan</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">${Object.keys(region.sectors).length}</div>
-                                <div class="stat-label">Sektor Aktif</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">${formatCurrency(region.totalInvestment)}</div>
-                                <div class="stat-label">Total Investasi</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="sector-controls">
-                        <button class="sector-toggle" id="toggleSector-${index}" onclick="toggleSectorFilter('${regionKey}', ${index})">
-                            <i class="fas fa-filter"></i>
-                            <span>Hanya Sektor Aktif</span>
-                        </button>
-                        <div class="sector-count-info" id="sectorCount-${index}">
-                            Menampilkan ${allSectors.length} dari ${allSectors.length} sektor
-                        </div>
-                    </div>
-                    
-                    <div class="sectors-grid" id="sectorsGrid-${index}">
-                        ${sectorCards}
+                modalBody.innerHTML = `
+                    <div class="top-investors-grid">
+                        ${investorCards}
                     </div>
                 `;
                 
-                slideContent.appendChild(slide);
-            });
-        }
-
-        function showSectorDetail(sectorName, regionKey) {
-            const region = investmentData[regionKey];
-            const sectorData = region.sectors[sectorName] || [];
-            
-            if (sectorData.length === 0) return;
-            
-            // Sort by investment amount
-            const sortedInvestors = [...sectorData].sort((a, b) => b.investment - a.investment);
-            
-            const modal = document.getElementById('sectorModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
-            
-            const sectorIcon = allSectors.find(s => s.name === sectorName)?.icon || 'fa-chart-line';
-            
-            modalTitle.innerHTML = `
-                <i class="fas ${sectorIcon}"></i>
-                <span>${sectorName} - ${region.name}</span>
-            `;
-            
-            const investorCards = sortedInvestors.map((investor, index) => {
-                const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+                modal.classList.add('active');
                 
-                return `
-                    <div class="investor-card">
-                        <div class="investor-rank">
-                            <div class="rank-number ${rankClass}">${index + 1}</div>
-                            <div class="investor-name">${investor.name}</div>
-                            <div class="investor-type ${investor.type}">${investor.type}</div>
-                        </div>
-                        <div class="investor-details">
-                            <div class="detail-item">
-                                <i class="fas fa-map-marker-alt detail-icon"></i>
-                                <span>${investor.district}</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-code detail-icon"></i>
-                                <span>KBLI: ${investor.kbli}</span>
-                            </div>
-                        </div>
-                        <div class="investor-investment">${formatCurrency(investor.investment)}</div>
-                        <div style="margin-top: 10px; padding: 10px; background: var(--light-bg); border-radius: 8px; font-size: 0.85rem; color: var(--text-light);">
-                            ${investor.description}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            modalBody.innerHTML = `
-                <div class="top-investors-grid">
-                    ${investorCards}
-                </div>
-            `;
-            
-            modal.classList.add('active');
+                // Focus management
+                const modalClose = modal.querySelector('.modal-close');
+                if (modalClose) {
+                    modalClose.focus();
+                }
+                
+                trapFocus(modal);
+                
+            } catch (error) {
+                logError('showSectorDetail', error, { sectorName, regionKey });
+            }
         }
 
         function closeSectorModal() {
-            document.getElementById('sectorModal').classList.remove('active');
+            const modal = document.getElementById('sectorModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
         }
 
+        // Enhanced slide management functions
         function showRegionSlide(slideNumber) {
-            // Hide all slides
-            document.querySelectorAll('.slide').forEach(slide => {
-                slide.classList.remove('active');
-            });
-            
-            // Show target slide
-            if (slideNumber === 0) {
-                document.getElementById('welcomeSlide').classList.add('active');
-                currentSlide = 0;
-            } else if (slideNumber === 'map' || slideNumber === 1) {
-                document.getElementById('mapOverviewSlide').classList.add('active');
-                currentSlide = 1;
-                // Refresh map after showing
-                setTimeout(() => {
-                    if (presentationMap) {
-                        presentationMap.invalidateSize();
+            try {
+                // Hide all slides
+                document.querySelectorAll('.slide').forEach(slide => {
+                    slide.classList.remove('active');
+                });
+                
+                // Show target slide
+                if (slideNumber === 0) {
+                    document.getElementById('welcomeSlide').classList.add('active');
+                    currentSlide = 0;
+                } else if (slideNumber === 'map' || slideNumber === 1) {
+                    document.getElementById('mapOverviewSlide').classList.add('active');
+                    currentSlide = 1;
+                    // Refresh map after showing
+                    setTimeout(() => {
+                        if (presentationMap) {
+                            try {
+                                presentationMap.invalidateSize();
+                            } catch (error) {
+                                logError('mapInvalidateSize', error);
+                            }
+                        }
+                    }, 100);
+                } else {
+                    const regionSlideIndex = slideNumber - 2; // Adjust for welcome and map slides
+                    const targetSlide = document.getElementById(`slide-${regionSlideIndex + 1}`);
+                    if (targetSlide) {
+                        targetSlide.classList.add('active');
                     }
-                }, 100);
-            } else {
-                const regionSlideIndex = slideNumber - 2; // Adjust for welcome and map slides
-                const targetSlide = document.getElementById(`slide-${regionSlideIndex + 1}`);
-                if (targetSlide) {
-                    targetSlide.classList.add('active');
+                    currentSlide = slideNumber;
                 }
-                currentSlide = slideNumber;
-            }
-            
-            updateProgress();
-            updateNavigationButtons();
-            updateMapNavButton();
-        }
-
-        function updateMapNavButton() {
-            const mapNavButton = document.getElementById('mapNavButton');
-            if (currentSlide === 1) { // Map slide
-                mapNavButton.style.display = 'none';
-            } else {
-                mapNavButton.style.display = 'flex';
-            }
-        }
-        
-
-        function updateActiveRegion(regionKey) {
-            document.querySelectorAll('.region-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            const activeItem = document.querySelector(`[data-region="${regionKey}"]`);
-            if (activeItem) {
-                activeItem.classList.add('active');
+                
+                updateProgress();
+                updateNavigationButtons();
+                updateMapNavButton();
+                
+            } catch (error) {
+                logError('showRegionSlide', error, { slideNumber });
             }
         }
 
@@ -2701,37 +3642,463 @@
             }
         }
 
+        function updateActiveRegion(regionKey) {
+            try {
+                document.querySelectorAll('.region-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                const activeItem = document.querySelector(`[data-region="${regionKey}"]`);
+                if (activeItem) {
+                    activeItem.classList.add('active');
+                    
+                    // Scroll into view if needed
+                    activeItem.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest'
+                    });
+                }
+            } catch (error) {
+                logError('updateActiveRegion', error, { regionKey });
+            }
+        }
+
         function updateNavigationButtons() {
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            
-            prevBtn.disabled = currentSlide === 0;
-            nextBtn.disabled = currentSlide === totalSlides - 1;
+            try {
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+                
+                if (prevBtn) {
+                    prevBtn.disabled = currentSlide === 0;
+                    prevBtn.setAttribute('aria-label', 
+                        currentSlide === 0 ? 'Slide sebelumnya (tidak tersedia)' : 'Slide sebelumnya');
+                }
+                
+                if (nextBtn) {
+                    nextBtn.disabled = currentSlide === totalSlides - 1;
+                    nextBtn.setAttribute('aria-label', 
+                        currentSlide === totalSlides - 1 ? 'Slide berikutnya (tidak tersedia)' : 'Slide berikutnya');
+                }
+            } catch (error) {
+                logError('updateNavigationButtons', error);
+            }
         }
 
         function updateProgress() {
-            const progressBar = document.getElementById('progressBar');
-            const progress = (currentSlide / (totalSlides - 1)) * 100;
-            progressBar.style.width = `${progress}%`;
+            try {
+                const progressBar = document.getElementById('progressBar');
+                if (progressBar) {
+                    const progress = totalSlides > 1 ? (currentSlide / (totalSlides - 1)) * 100 : 0;
+                    progressBar.style.width = `${progress}%`;
+                    progressBar.setAttribute('aria-valuenow', Math.round(progress));
+                    progressBar.setAttribute('aria-valuetext', `${currentSlide + 1} dari ${totalSlides} slide`);
+                }
+            } catch (error) {
+                logError('updateProgress', error);
+            }
         }
 
+        function updateMapNavButton() {
+            try {
+                const mapNavButton = document.getElementById('mapNavButton');
+                if (mapNavButton) {
+                    if (currentSlide === 1) { // Map slide
+                        mapNavButton.style.display = 'none';
+                    } else {
+                        mapNavButton.style.display = 'flex';
+                    }
+                }
+            } catch (error) {
+                logError('updateMapNavButton', error);
+            }
+        }
+
+        // Enhanced region slides creation
+        async function createRegionSlides() {
+            try {
+                const slideContent = document.querySelector('.slide-content');
+                if (!slideContent) throw new Error('Slide content container not found');
+                
+                regions.forEach((regionKey, index) => {
+                    const region = investmentData[regionKey];
+                    const slide = document.createElement('section');
+                    slide.className = 'slide';
+                    slide.id = `slide-${index + 1}`;
+                    slide.setAttribute('aria-labelledby', `region-title-${index}`);
+                    
+                    // Get sectors for this region
+                    const regionSectors = Object.keys(region.sectors);
+                    
+                    // Create sector cards with data from the region
+                    const sectorCards = allSectors.map(sector => {
+                        const hasData = regionSectors.includes(sector.name);
+                        const sectorData = hasData ? region.sectors[sector.name] : [];
+                        const totalInvestment = sectorData.reduce((sum, investor) => sum + investor.investment, 0);
+                        
+                        return `
+                            <article class="sector-card ${hasData ? '' : 'no-data'}" 
+                                     data-has-data="${hasData}"
+                                     tabindex="0"
+                                     role="button"
+                                     aria-label="${hasData ? `Lihat detail sektor ${sector.name} dengan ${sectorData.length} investor` : `Sektor ${sector.name} tidak memiliki data`}"
+                                     ${hasData ? `onclick="showSectorDetail('${sector.name}', '${regionKey}')"` : ''}>
+                                <div class="sector-header">
+                                    <div class="sector-icon" aria-hidden="true">
+                                        <i class="fas ${sector.icon}"></i>
+                                    </div>
+                                    <div class="sector-info">
+                                        <h3>${sector.name}</h3>
+                                        <div class="sector-count">
+                                            ${hasData ? `${sectorData.length} Investor` : 'Tidak ada data'}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="sector-stats">
+                                    <div class="sector-investment">
+                                        ${hasData ? formatCurrency(totalInvestment) : '-'}
+                                    </div>
+                                    <div class="sector-arrow" aria-hidden="true">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </div>
+                                </div>
+                            </article>
+                        `;
+                    }).join('');
+                    
+                    slide.innerHTML = `
+                        <div class="region-detail-header">
+                            <div class="region-detail-title">
+                                <div class="region-icon" aria-hidden="true">
+                                    <i class="fas ${region.type === 'Ibu Kota' ? 'fa-star' : region.type === 'Kota' ? 'fa-building' : 'fa-mountain'}"></i>
+                                </div>
+                                <div class="region-title-text">
+                                    <h2 id="region-title-${index}">${region.name}</h2>
+                                    <p>${region.type} • Populasi: ${region.population} jiwa</p>
+                                </div>
+                            </div>
+                            <div class="region-stats-summary" role="region" aria-label="Statistik investasi ${region.name}">
+                                <div class="stat-item">
+                                    <div class="stat-value">${region.totalCompanies}</div>
+                                    <div class="stat-label">Perusahaan</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${Object.keys(region.sectors).length}</div>
+                                    <div class="stat-label">Sektor Aktif</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${formatCurrency(region.totalInvestment)}</div>
+                                    <div class="stat-label">Total Investasi</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="sector-controls">
+                            <button class="sector-toggle" 
+                                    id="toggleSector-${index}" 
+                                    onclick="toggleSectorFilter('${regionKey}', ${index})"
+                                    aria-label="Filter sektor aktif">
+                                <i class="fas fa-filter" aria-hidden="true"></i>
+                                <span>Hanya Sektor Aktif</span>
+                            </button>
+                            <div class="sector-count-info" id="sectorCount-${index}" role="status" aria-live="polite">
+                                Menampilkan ${allSectors.length} dari ${allSectors.length} sektor
+                            </div>
+                        </div>
+                        
+                        <div class="sectors-grid" id="sectorsGrid-${index}" role="grid" aria-label="Daftar sektor ekonomi">
+                            ${sectorCards}
+                        </div>
+                    `;
+                    
+                    slideContent.appendChild(slide);
+                });
+                
+                // Add keyboard navigation to sector cards
+                document.addEventListener('keydown', (e) => {
+                    if (e.target.classList.contains('sector-card') && (e.key === 'Enter' || e.key === ' ')) {
+                        e.preventDefault();
+                        if (!e.target.classList.contains('no-data')) {
+                            e.target.click();
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                logError('createRegionSlides', error);
+                throw error;
+            }
+        }
+
+        // Enhanced sector filter function
+        function toggleSectorFilter(regionKey, slideIndex) {
+            try {
+                const toggle = document.getElementById(`toggleSector-${slideIndex}`);
+                const grid = document.getElementById(`sectorsGrid-${slideIndex}`);
+                const countInfo = document.getElementById(`sectorCount-${slideIndex}`);
+                
+                if (!toggle || !grid || !countInfo) return;
+                
+                const isActive = toggle.classList.contains('active');
+                const region = investmentData[regionKey];
+                const activeSectors = Object.keys(region.sectors).length;
+                
+                if (isActive) {
+                    // Show all sectors
+                    toggle.classList.remove('active');
+                    toggle.querySelector('span').textContent = 'Hanya Sektor Aktif';
+                    toggle.setAttribute('aria-label', 'Filter sektor aktif');
+                    
+                    const cards = grid.querySelectorAll('.sector-card');
+                    cards.forEach(card => {
+                        card.style.display = 'flex';
+                    });
+                    
+                    countInfo.textContent = `Menampilkan ${allSectors.length} dari ${allSectors.length} sektor`;
+                } else {
+                    // Show only active sectors
+                    toggle.classList.add('active');
+                    toggle.querySelector('span').textContent = 'Semua Sektor';
+                    toggle.setAttribute('aria-label', 'Tampilkan semua sektor');
+                    
+                    const cards = grid.querySelectorAll('.sector-card');
+                    cards.forEach(card => {
+                        const hasData = card.getAttribute('data-has-data') === 'true';
+                        card.style.display = hasData ? 'flex' : 'none';
+                    });
+                    
+                    countInfo.textContent = `Menampilkan ${activeSectors} dari ${allSectors.length} sektor`;
+                }
+            } catch (error) {
+                logError('toggleSectorFilter', error, { regionKey, slideIndex });
+            }
+        }
+
+        // Map functions
+        function showMapOverview() {
+            showRegionSlide('map');
+            
+            // Refresh map size after showing
+            setTimeout(() => {
+                if (presentationMap) {
+                    try {
+                        presentationMap.invalidateSize();
+                        presentationMap.setView([-8.6500, 117.3616], 8);
+                    } catch (error) {
+                        logError('mapRefresh', error);
+                    }
+                }
+            }, 300);
+        }
+
+        function resetMapView() {
+            if (presentationMap) {
+                try {
+                    presentationMap.setView([-8.6500, 117.3616], 8);
+                    closeMapPopups();
+                } catch (error) {
+                    logError('resetMapView', error);
+                }
+            }
+        }
+
+        function toggleMapFullscreen() {
+            const mapContainer = document.querySelector('.map-container');
+            if (mapContainer) {
+                try {
+                    if (mapContainer.requestFullscreen) {
+                        mapContainer.requestFullscreen();
+                    } else if (mapContainer.webkitRequestFullscreen) {
+                        mapContainer.webkitRequestFullscreen();
+                    } else if (mapContainer.msRequestFullscreen) {
+                        mapContainer.msRequestFullscreen();
+                    }
+                    
+                    setTimeout(() => {
+                        if (presentationMap) {
+                            presentationMap.invalidateSize();
+                        }
+                    }, 100);
+                } catch (error) {
+                    logError('toggleMapFullscreen', error);
+                }
+            }
+        }
+
+        function goToRegionDetail(regionKey) {
+            try {
+                const slideIndex = regions.indexOf(regionKey) + 2; // +2 for welcome and map slides
+                if (slideIndex >= 2) {
+                    showRegionSlide(slideIndex);
+                    updateActiveRegion(regionKey);
+                    closeMapPopups();
+                }
+            } catch (error) {
+                logError('goToRegionDetail', error, { regionKey });
+            }
+        }
+
+        function closeMapPopups() {
+            if (presentationMap) {
+                try {
+                    presentationMap.closePopup();
+                    presentationMap.eachLayer(function(layer) {
+                        if (layer.closePopup) {
+                            layer.closePopup();
+                        }
+                        if (layer.closeTooltip) {
+                            layer.closeTooltip();
+                        }
+                    });
+                } catch (error) {
+                    logError('closeMapPopups', error);
+                }
+            }
+        }
+
+        // Presentation control functions
         function resetPresentation() {
-            showRegionSlide(0);
-            document.querySelectorAll('.region-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            closeSectorModal();
-            closeMapPopups();
-            clearSearch(); // Clear search when resetting
+            try {
+                showRegionSlide(0);
+                document.querySelectorAll('.region-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                closeSectorModal();
+                closeHelpModal();
+                closeMapPopups();
+                clearSearch();
+                
+                // Update control buttons
+                document.querySelectorAll('.control-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector('.control-btn[onclick="resetPresentation()"]')?.classList.add('active');
+                
+            } catch (error) {
+                logError('resetPresentation', error);
+            }
         }
 
         function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
-            } else {
-                document.exitFullscreen();
+            try {
+                if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                    if (document.documentElement.requestFullscreen) {
+                        document.documentElement.requestFullscreen();
+                    } else if (document.documentElement.webkitRequestFullscreen) {
+                        document.documentElement.webkitRequestFullscreen();
+                    } else if (document.documentElement.msRequestFullscreen) {
+                        document.documentElement.msRequestFullscreen();
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                }
+            } catch (error) {
+                logError('toggleFullscreen', error);
             }
         }
+
+        // Event listeners and initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Add ARIA attributes to progress bar
+                const progressBar = document.getElementById('progressBar');
+                if (progressBar) {
+                    progressBar.setAttribute('role', 'progressbar');
+                    progressBar.setAttribute('aria-valuemin', '0');
+                    progressBar.setAttribute('aria-valuemax', '100');
+                    progressBar.setAttribute('aria-valuenow', '0');
+                }
+
+                // Initialize presentation
+                initializePresentation();
+                
+                // Add keyboard navigation
+                document.addEventListener('keydown', handleKeyboardNavigation);
+                
+                // Add window resize handler for map
+                let resizeTimeout;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(() => {
+                        if (presentationMap) {
+                            try {
+                                presentationMap.invalidateSize();
+                            } catch (error) {
+                                logError('windowResize', error);
+                            }
+                        }
+                    }, 250);
+                });
+
+                // Close modals when clicking outside
+                document.getElementById('sectorModal')?.addEventListener('click', (e) => {
+                    if (e.target.id === 'sectorModal') {
+                        closeSectorModal();
+                    }
+                });
+
+                document.getElementById('helpModal')?.addEventListener('click', (e) => {
+                    if (e.target.id === 'helpModal') {
+                        closeHelpModal();
+                    }
+                });
+
+                // Handle fullscreen changes
+                document.addEventListener('fullscreenchange', handleFullscreenChange);
+                document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+                document.addEventListener('msfullscreenchange', handleFullscreenChange);
+
+                function handleFullscreenChange() {
+                    setTimeout(() => {
+                        if (presentationMap) {
+                            try {
+                                presentationMap.invalidateSize();
+                            } catch (error) {
+                                logError('fullscreenChange', error);
+                            }
+                        }
+                    }, 100);
+                }
+
+                // Add performance monitoring
+                if (typeof PerformanceObserver !== 'undefined') {
+                    const observer = new PerformanceObserver((list) => {
+                        for (const entry of list.getEntries()) {
+                            if (entry.entryType === 'navigation') {
+                                console.log('Page load performance:', {
+                                    domContentLoaded: entry.domContentLoadedEventEnd - entry.domContentLoadedEventStart,
+                                    loadComplete: entry.loadEventEnd - entry.loadEventStart
+                                });
+                            }
+                        }
+                    });
+                    observer.observe({ entryTypes: ['navigation'] });
+                }
+
+                console.log('Dashboard initialized successfully');
+                
+            } catch (error) {
+                logError('DOMContentLoaded', error);
+                hideLoadingOverlay();
+                
+                // Fallback error message
+                document.body.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column; text-align: center; padding: 20px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #dc2626; margin-bottom: 20px;"></i>
+                        <h1 style="color: #1f2937; margin-bottom: 10px;">Gagal Memuat Dashboard</h1>
+                        <p style="color: #6b7280; margin-bottom: 20px;">Terjadi kesalahan saat memuat dashboard investasi NTB.</p>
+                        <button onclick="location.reload()" style="padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            Muat Ulang Halaman
+                        </button>
+                    </div>
+                `;
+            }
+        });
 
         // Add marker pulse animation and custom styles
         const markerStyle = document.createElement('style');
@@ -2761,7 +4128,6 @@
                 border-top-color: rgba(255, 255, 255, 0.95) !important;
             }
             
-            /* Custom popup styles */
             .leaflet-popup {
                 z-index: 1002 !important;
             }
@@ -2776,101 +4142,59 @@
                 outline: none !important;
                 user-select: none !important;
             }
+            
+            /* Focus indicators for better accessibility */
+            .region-item:focus-visible,
+            .sector-card:focus-visible,
+            .control-btn:focus-visible,
+            .nav-btn:focus-visible,
+            .map-control-btn:focus-visible {
+                outline: 3px solid var(--primary-blue) !important;
+                outline-offset: 2px !important;
+            }
+            
+            /* High contrast support */
+            @media (prefers-contrast: high) {
+                .sector-card,
+                .region-item,
+                .investor-card {
+                    border: 2px solid #000000 !important;
+                }
+            }
+            
+            /* Reduced motion support */
+            @media (prefers-reduced-motion: reduce) {
+                .spinner {
+                    animation: none !important;
+                    border: 4px solid var(--primary-blue) !important;
+                }
+                
+                .sector-card:hover,
+                .region-item:hover,
+                .nav-btn:hover {
+                    transform: none !important;
+                }
+            }
         `;
         document.head.appendChild(markerStyle);
 
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            // Don't interfere with search input
-            if (e.target.id === 'regionSearch') {
-                return;
-            }
-            
-            switch(e.key) {
-                case 'ArrowRight':
-                case ' ':
-                    e.preventDefault();
-                    nextSlide();
-                    break;
-                case 'ArrowLeft':
-                    e.preventDefault();
-                    previousSlide();
-                    break;
-                case 'Home':
-                    e.preventDefault();
-                    resetPresentation();
-                    break;
-                case 'Escape':
-                    closeSectorModal();
-                    closeMapPopups();
-                    break;
-                case 'F11':
-                    e.preventDefault();
-                    toggleFullscreen();
-                    break;
-                case 'M':
-                case 'm':
-                    e.preventDefault();
-                    showMapOverview();
-                    break;
-                case '/':
-                    e.preventDefault();
-                    document.getElementById('regionSearch')?.focus();
-                    break;
-            }
-        });
-
-        // Handle window resize for map
-        window.addEventListener('resize', () => {
-            if (presentationMap) {
-                setTimeout(() => {
-                    try {
-                        presentationMap.invalidateSize();
-                    } catch (error) {
-                        console.error('Error handling resize:', error);
-                    }
-                }, 100);
-            }
-        });
-
-        // Close modal when clicking outside or handle popup interactions
-        document.getElementById('sectorModal').addEventListener('click', (e) => {
-            if (e.target.id === 'sectorModal') {
-                closeSectorModal();
-            }
-        });
-
-        // Add global click handler for popup buttons
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.popup-btn')) {
-                const btn = e.target.closest('.popup-btn');
-                if (btn.onclick) {
-                    btn.onclick();
-                }
-            }
-        });
-
-        // Prevent map clicks when popup is open
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.leaflet-popup')) {
-                e.stopPropagation();
-            }
-        });
-
-        // Initialize presentation when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                initializePresentation();
-                console.log('Presentation initialized successfully');
-            } catch (error) {
-                console.error('Error initializing presentation:', error);
-                // Fallback initialization without map
-                populateRegionList();
-                createRegionSlides();
-                updateProgress();
-                updateNavigationButtons();
-            }
-        });
+        // Export functions for global access
+        window.showSectorDetail = showSectorDetail;
+        window.closeSectorModal = closeSectorModal;
+        window.showHelpModal = showHelpModal;
+        window.closeHelpModal = closeHelpModal;
+        window.resetPresentation = resetPresentation;
+        window.showMapOverview = showMapOverview;
+        window.toggleFullscreen = toggleFullscreen;
+        window.nextSlide = nextSlide;
+        window.previousSlide = previousSlide;
+        window.clearSearch = clearSearch;
+        window.toggleSectorFilter = toggleSectorFilter;
+        window.resetMapView = resetMapView;
+        window.toggleMapFullscreen = toggleMapFullscreen;
+        window.goToRegionDetail = goToRegionDetail;
+        window.closeMapPopups = closeMapPopups;
+        window.retryMapLoad = retryMapLoad;
     </script>
 </body>
 </html>
