@@ -6,7 +6,7 @@ const investmentData = {
         "type": "Provinsi",
         "population": "5,320,092",
         "totalInvestment": 50200000000000,
-        "totalCompanies": 62,
+        "totalCompanies": 55,
         "sectors": {
             "Perindustrian": [
                 {
