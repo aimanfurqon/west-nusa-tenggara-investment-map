@@ -4,14 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Peta Investasi NTB - Presentasi Interaktif</title>
-    <meta name="description" content="Dashboard interaktif investasi Nusa Tenggara Barat dengan detail 10 kabupaten/kota dan 16 sektor ekonomi">
+    <meta name="description" content="Dashboard interaktif investasi Nusa Tenggara Barat dengan detail 10 kabupaten/kota, 16 sektor ekonomi, dan KSP">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- PERBAIKAN: Tambahkan inline styles untuk CSS variables -->
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --primary-green: #059669;
+            --accent-gold: #f59e0b;
+            --dark-blue: #1e3a8a;
+            --light-bg: #f8fafc;
+            --white: #ffffff;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --border-light: #e5e7eb;
+            --hover-bg: #f3f4f6;
+            --error-red: #dc2626;
+            --success-green: #16a34a;
+            --warning-yellow: #ca8a04;
+            --ksp-economic: #10b981;
+            --ksp-environmental: #059669;
+        }
+        
+        /* Error state styles */
+        .error-state {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--error-red);
+        }
+
+        .error-state.show {
+            display: block;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+
+        .error-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .retry-btn {
+            padding: 10px 20px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            background: var(--dark-blue);
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -20,7 +86,7 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner" role="status" aria-label="Loading"></div>
         <div class="loading-text">Memuat Dashboard Investasi NTB</div>
-        <div class="loading-subtext">Menyiapkan data dan peta interaktif...</div>
+        <div class="loading-subtext">Menyiapkan data investasi, KSP, dan peta interaktif...</div>
     </div>
 
     <!-- Help Modal -->
@@ -51,42 +117,6 @@
                         <span>Kembali ke beranda</span>
                         <span class="shortcut-key">Home</span>
                     </div>
-                    <div class="shortcut-item">
-                        <span>Buka peta NTB</span>
-                        <span class="shortcut-key">M</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="help-section">
-                <h4><i class="fas fa-search"></i> Pencarian</h4>
-                <div class="help-shortcuts">
-                    <div class="shortcut-item">
-                        <span>Fokus ke pencarian</span>
-                        <span class="shortcut-key">/</span>
-                    </div>
-                    <div class="shortcut-item">
-                        <span>Bersihkan pencarian</span>
-                        <span class="shortcut-key">Esc</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="help-section">
-                <h4><i class="fas fa-expand"></i> Tampilan</h4>
-                <div class="help-shortcuts">
-                    <div class="shortcut-item">
-                        <span>Mode fullscreen</span>
-                        <span class="shortcut-key">F11</span>
-                    </div>
-                    <div class="shortcut-item">
-                        <span>Tutup modal</span>
-                        <span class="shortcut-key">Esc</span>
-                    </div>
-                    <div class="shortcut-item">
-                        <span>Bantuan ini</span>
-                        <span class="shortcut-key">F1 atau ?</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -97,7 +127,7 @@
         <header class="presentation-header">
             <div class="header-left">
                 <div class="logo-container">
-                    <img src="img/dpmptsp-logo.png" alt="Logo DPMPTSP NTB" class="logo">
+                    <img src="img/dpmptsp-logo.png" alt="Logo DPMPTSP NTB" class="logo" onerror="this.style.display='none'">
                 </div>
                 <div class="title-section">
                     <h1>Dashboard Profil & Peta Investasi NTB</h1>
@@ -129,11 +159,13 @@
         <!-- Main Content -->
         <main class="content-area" id="main-content">
             <!-- Region Navigation -->
-            <aside class="slide-navigation" role="complementary" aria-label="Navigasi wilayah">
+            <aside class="slide-navigation" role="complementary" aria-label="Navigasi wilayah dan KSP">
                 <div class="nav-title">
                     <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                    Wilayah NTB
+                    Dashboard NTB
                 </div>
+                
+                <!-- Mode Toggle will be inserted here by JavaScript -->
                 
                 <!-- Search Box -->
                 <div class="search-container">
@@ -142,9 +174,9 @@
                         type="text" 
                         class="search-input" 
                         id="regionSearch" 
-                        placeholder="Cari wilayah..."
+                        placeholder="Cari wilayah atau KSP..."
                         autocomplete="off"
-                        aria-label="Cari wilayah di NTB"
+                        aria-label="Cari wilayah atau KSP di NTB"
                         role="searchbox"
                     >
                     <button class="search-clear" id="searchClear" onclick="clearSearch()" aria-label="Bersihkan pencarian">
@@ -152,14 +184,14 @@
                     </button>
                 </div>
                 
-                <nav class="region-list" id="regionList" role="navigation" aria-label="Daftar wilayah NTB">
-                    <!-- Regions will be populated by JavaScript -->
+                <nav class="region-list" id="regionList" role="navigation" aria-label="Daftar wilayah dan KSP NTB">
+                    <!-- Regions/KSP will be populated by JavaScript -->
                 </nav>
                 
                 <!-- No Results Message -->
                 <div class="no-results" id="noResults" role="status" aria-live="polite">
                     <i class="fas fa-search" aria-hidden="true"></i>
-                    <div>Tidak ada wilayah yang ditemukan</div>
+                    <div>Tidak ada hasil yang ditemukan</div>
                     <small>Coba kata kunci lain</small>
                 </div>
             </aside>
@@ -167,7 +199,7 @@
             <!-- Slide Content -->
             <main class="slide-content" role="main">
                 <!-- Welcome Slide -->
-                <section class="slide active" id="welcomeSlide" aria-labelledby="welcome-title">
+                <section class="slide" id="welcomeSlide" aria-labelledby="welcome-title">
                     <div class="welcome-slide">
                         <div class="welcome-icon" aria-hidden="true">
                             <i class="fas fa-presentation"></i>
@@ -175,17 +207,18 @@
                         <h1 class="welcome-title" id="welcome-title">Presentasi Investasi NTB</h1>
                         <p class="welcome-subtitle">
                             Jelajahi data investasi real-time dari 10 kabupaten/kota di Nusa Tenggara Barat 
-                            dengan detail 16 sektor ekonomi dan profil investor terkemuka.
+                            dengan detail 16 sektor ekonomi, profil investor terkemuka, dan 11 Kawasan Strategis Provinsi (KSP).
                         </p>
                         <div class="welcome-instructions">
                             <h3><i class="fas fa-info-circle" aria-hidden="true"></i> Cara Penggunaan</h3>
                             <p>
-                                • Pilih wilayah di panel kiri untuk melihat detail investasi<br>
-                                • Klik sektor untuk melihat top 10 investor terbesar<br>
-                                • Tekan "/" untuk fokus ke pencarian wilayah<br>
+                                • Pilih mode Kabupaten/Kota atau KSP di panel kiri<br>
+                                • Klik wilayah untuk melihat detail investasi per sektor<br>
+                                • Klik KSP untuk melihat tujuan dan arah pengembangan<br>
+                                • Tekan "/" untuk fokus ke pencarian<br>
+                                • Tekan "K" untuk toggle antara mode Wilayah dan KSP<br>
                                 • Gunakan tombol navigasi untuk berpindah antar slide<br>
                                 • Klik fullscreen untuk pengalaman presentasi optimal<br>
-                                • Klik "Peta NTB" untuk melihat overview geografis<br>
                                 • Tekan F1 atau ? untuk melihat bantuan lengkap
                             </p>
                         </div>
@@ -193,53 +226,20 @@
                 </section>
 
                 <!-- Map Overview Slide -->
-                <section class="slide" id="mapOverviewSlide" aria-labelledby="map-title">
+                <section class="slide active" id="mapOverviewSlide" aria-labelledby="map-title">
                     <div class="map-overview-slide">
                         <div class="map-header">
                             <div class="map-title">
                                 <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
-                                <h2 id="map-title">Peta Investasi NTB</h2>
-                            </div>
-                            <div class="map-controls">
-                                <button class="map-control-btn active" onclick="resetMapView()" aria-label="Reset tampilan peta">
-                                    <i class="fas fa-home" aria-hidden="true"></i> Reset View
-                                </button>
-                                <button class="map-control-btn" onclick="toggleMapFullscreen()" aria-label="Peta layar penuh">
-                                    <i class="fas fa-expand" aria-hidden="true"></i> Fullscreen Map
-                                </button>
+                                <h2 id="map-title">Peta Investasi & KSP NTB</h2>
                             </div>
                         </div>
                         <div class="map-container">
-                            <div id="presentationMap" role="img" aria-label="Peta interaktif investasi NTB"></div>
+                            <div id="presentationMap" role="img" aria-label="Peta interaktif investasi dan KSP NTB"></div>
                             
-                            <!-- Map Legend -->
-                            <div class="map-legend" role="legend" aria-label="Keterangan peta">
-                                <div class="legend-title">Keterangan</div>
-                                <div class="legend-items">
-                                    <div class="legend-item">
-                                        <div class="legend-marker ibu-kota" aria-hidden="true">
-                                            <i class="fas fa-star"></i>
-                                        </div>
-                                        <span>Ibu Kota Provinsi</span>
-                                    </div>
-                                    <div class="legend-item">
-                                        <div class="legend-marker kota" aria-hidden="true">
-                                            <i class="fas fa-building"></i>
-                                        </div>
-                                        <span>Kota</span>
-                                    </div>
-                                    <div class="legend-item">
-                                        <div class="legend-marker kabupaten" aria-hidden="true">
-                                            <i class="fas fa-mountain"></i>
-                                        </div>
-                                        <span>Kabupaten</span>
-                                    </div>
-                                </div>
-                            </div>
-
                             <!-- Map Stats -->
-                            <div class="map-stats" role="region" aria-label="Statistik investasi">
-                                <div class="stats-title">Statistik Investasi</div>
+                            <div class="map-stats" role="region" aria-label="Statistik investasi dan KSP">
+                                <div class="stats-title">Statistik NTB</div>
                                 <div class="stats-grid">
                                     <div class="stats-item">
                                         <div class="stats-value" id="mapTotalRegions">10</div>
@@ -270,7 +270,7 @@
                                     Terjadi kesalahan saat memuat peta interaktif. 
                                     Silakan coba muat ulang atau periksa koneksi internet Anda.
                                 </div>
-                                <button class="retry-btn" onclick="retryMapLoad()" aria-label="Coba muat ulang peta">
+                                <button class="retry-btn" onclick="location.reload()" aria-label="Coba muat ulang peta">
                                     <i class="fas fa-redo"></i> Muat Ulang Peta
                                 </button>
                             </div>
@@ -278,7 +278,7 @@
                     </div>
                 </section>
 
-                <!-- Region Detail Slides will be populated by JavaScript -->
+                <!-- Region Detail Slides and KSP Slides will be populated by JavaScript -->
             </main>
         </main>
     </div>
@@ -319,10 +319,148 @@
     <!-- Progress Bar -->
     <div class="progress-bar" id="progressBar" role="progressbar" aria-label="Progress presentasi"></div>
 
+    <!-- PERBAIKAN: Script Loading dengan Error Handling -->
+    <!-- <script>
+        // Initialize basic error handling before loading external scripts
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.error('Global error:', msg, 'at', url, ':', lineNo);
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+            }
+            
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+                mainContent.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column; text-align: center; padding: 20px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #dc2626; margin-bottom: 20px;"></i>
+                        <h1 style="color: #1f2937; margin-bottom: 10px;">Gagal Memuat Dashboard</h1>
+                        <p style="color: #6b7280; margin-bottom: 20px;">Error: ${msg}</p>
+                        <button onclick="location.reload()" style="padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            Muat Ulang Halaman
+                        </button>
+                    </div>
+                `;
+            }
+            return true;
+        };
+        
+        // Simple data definitions for fallback
+        window.investmentData = window.investmentData || {
+            "Mataram": {
+                "name": "Mataram",
+                "type": "Ibu Kota",
+                "population": "441,546",
+                "totalInvestment": 3866937143928,
+                "totalCompanies": 58,
+                "sectors": {
+                    "ESDM": [
+                        {
+                            "name": "TIRTADAYA RINJANI",
+                            "investment": 636714506,
+                            "type": "PMDN",
+                            "kbli": "35111",
+                            "district": "Cakranegara",
+                            "description": "Pembangkitan Tenaga Listrik"
+                        }
+                    ]
+                }
+            }
+        };
+        
+        window.kspData = window.kspData || {
+            "mataram_raya_gili_tramena": {
+                "name": "Kawasan Mataram Raya - Gili Tramena dan Sekitarnya",
+                "type": "KSP Pertumbuhan Ekonomi",
+                "coverage": "Kota Mataram, Kabupaten Lombok Barat, Kabupaten Lombok Utara",
+                "sectors": ["Perdagangan dan Jasa", "Industri", "Pariwisata", "Perikanan"],
+                "description": "Mewujudkan integrasi Kawasan Mataram Raya - Gili Tramena berbasis sektor ekonomi unggulan",
+                "coordinates": [116.1178, -8.5833],
+                "objectives": [
+                    "Pengembangan linkage system sektor perdagangan dan jasa yang terintegrasi",
+                    "Perlindungan dan pelestarian sumber daya alam",
+                    "Penataan kawasan berbasis pengurangan risiko bencana"
+                ]
+            }
+        };
+        
+        window.allSectors = window.allSectors || [
+            { name: "Perindustrian", icon: "fa-industry" },
+            { name: "ESDM", icon: "fa-bolt" },
+            { name: "Lingkungan Hidup", icon: "fa-leaf" },
+            { name: "Perdagangan", icon: "fa-store" },
+            { name: "Pariwisata dan Ekonomi Kreatif", icon: "fa-camera" },
+            { name: "Transportasi", icon: "fa-truck" },
+            { name: "Komunikasi", icon: "fa-tower-cell" },
+            { name: "Keuangan", icon: "fa-coins" },
+            { name: "Pertanian dan Kehutanan", icon: "fa-seedling" },
+            { name: "Kelautan dan Perikanan", icon: "fa-fish" },
+            { name: "PUPR", icon: "fa-building" },
+            { name: "Pendidikan", icon: "fa-graduation-cap" },
+            { name: "Kesehatan", icon: "fa-hospital" },
+            { name: "Peternakan", icon: "fa-cow" },
+            { name: "Telekomunikasi", icon: "fa-satellite-dish" },
+            { name: "Pertanian", icon: "fa-wheat-awn" }
+        ];
+        
+        window.regionCoordinates = window.regionCoordinates || {
+            "Mataram": [116.1178, -8.5833],
+            "Lombok Barat": [116.1047, -8.6500],
+            "Lombok Tengah": [116.3081, -8.7000],
+            "Lombok Timur": [116.5472, -8.5500],
+            "Lombok Utara": [116.4067, -8.3500],
+            "Sumbawa": [117.4181, -8.4667],
+            "Sumbawa Barat": [116.8167, -8.7167],
+            "Dompu": [118.4667, -8.5333],
+            "Bima": [118.67110374463014, -8.52054931464641],
+            "Kota Bima": [118.7267, -8.4600],
+            "Nusa Tenggara Barat": [116.10350952869848, -8.57867222621296]
+        };
+        
+        window.regions = window.regions || Object.keys(window.investmentData);
+        window.kspKeys = window.kspKeys || Object.keys(window.kspData);
+    </script>
+     -->
     <!-- Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Custom JavaScript -->
-    <script src="js/data.js"></script>
-    <script src="js/app.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            onerror="console.error('Failed to load Leaflet library')"></script>
+    
+    <!-- Data JavaScript -->
+    <script src="js/data.js" 
+            onerror="console.warn('Failed to load data.js, using fallback data')"></script>
+    
+    <!-- Main Application JavaScript -->
+    <script src="js/app.js" 
+            onerror="console.error('Failed to load app.js'); location.reload();"></script>
+
+    <script>
+        // Fallback initialization if main scripts fail
+        setTimeout(function() {
+            if (typeof initializePresentation === 'undefined') {
+                console.warn('Main app failed to load, using basic fallback');
+                
+                // Hide loading overlay
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) {
+                    loadingOverlay.style.display = 'none';
+                }
+                
+                // Show basic error message
+                const mainContent = document.getElementById('main-content');
+                if (mainContent) {
+                    mainContent.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column; text-align: center; padding: 20px;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #dc2626; margin-bottom: 20px;"></i>
+                            <h1 style="color: #1f2937; margin-bottom: 10px;">Dashboard Sedang Dalam Perbaikan</h1>
+                            <p style="color: #6b7280; margin-bottom: 20px;">Silakan coba muat ulang halaman atau hubungi administrator.</p>
+                            <button onclick="location.reload()" style="padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                                <i class="fas fa-redo"></i> Muat Ulang Halaman
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        }, 5000); // Wait 5 seconds for scripts to load
+    </script>
 </body>
 </html>

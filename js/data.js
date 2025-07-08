@@ -1,6 +1,4 @@
 const investmentData = {
-    
-    
     "Nusa Tenggara Barat": {
         "name": "Nusa Tenggara Barat",
         "type": "Provinsi",
@@ -4600,6 +4598,200 @@ const investmentData = {
   }
 };
 
+// data.js
+
+const kspData = {
+    "mataram_raya_gili_tramena": {
+        "id": "A1",
+        "name": "KSP Mataram Raya - Gili Tramena DSK",
+        "type": "KSP Pertumbuhan Ekonomi",
+        "coverage": "Kota Mataram, Kabupaten Lombok Barat, Kabupaten Lombok Utara, perairan Kawasan Kayangan, perairan Kawasan Gili Indah, dan perairan Kawasan Lembar",
+        "sectors": ["Perdagangan dan Jasa", "Industri", "Pariwisata", "Perikanan"],
+        "description": "Mewujudkan integrasi Kawasan Mataram Raya - Gili Tramena berbasis sektor ekonomi unggulan perdagangan dan jasa, industri, pariwisata, serta Perikanan",
+        "coordinates": [116.1178, -8.5833],
+        "objectives": [
+            "Pengembangan linkage system sektor perdagangan dan jasa, industri, pariwisata, serta Perikanan yang terintegrasi",
+            "Perlindungan, pelestarian, serta optimalisasi pemanfaatan potensi sumber daya alam serta sumber daya Kelautan dan Perikanan",
+            "Penataan dan pengendalian Kawasan yang berbasis pada aspek pengurangan risiko bencana",
+            "Penyelenggaraan kegiatan perdagangan dan jasa, industri, pariwisata berkelanjutan, serta Perikanan lestari yang berwawasan lingkungan dan berbasis kerakyatan",
+            "Peningkatan prasarana, sarana, dan utilitas umum yang mendukung kualitas dan keberlanjutan sektor",
+            "Peningkatan produktivitas dan diversifikasi usaha yang berbasis potensi",
+            "Peningkatkan kualitas sumberdaya manusia pelaku usaha",
+            "Peningkatan Peran Masyarakat dan kelembagaan dalam mendukung dan menciptakan iklim berusaha"
+        ]
+    },
+    "kuta_mandalika": {
+        "id": "A2",
+        "name": "KSP Kuta Mandalika DSK",
+        "type": "KSP Pertumbuhan Ekonomi",
+        "coverage": "Kabupaten Lombok Barat, Kabupaten Lombok Tengah, Kabupaten Lombok Timur, perairan Kawasan Lembar, perairan Kawasan Teluk Sepi, perairan Kawasan Kuta, perairan Kawasan Teluk Ekas, dan perairan Kawasan Samudera Hindia Lombok",
+        "sectors": ["Pariwisata", "Perikanan", "Industri"],
+        "description": "Mewujudkan Kawasan Pariwisata, Perikanan, dan industri berbasis potensi sumber daya alam yang mendukung KEK Mandalika",
+        "coordinates": [116.3081, -8.8500],
+        "objectives": [
+            "Pengembangan linkage system sektor pariwisata, Perikanan, dan industri yang terintegrasi",
+            "Perlindungan, pelestarian, serta optimalisasi pemanfaatan potensi sumber daya alam serta sumber daya Kelautan dan Perikanan",
+            "Penataan dan pengendalian Kawasan yang berbasis pada aspek pengurangan risiko bencana",
+            "Penyelenggaraan kegiatan pariwisata berkelanjutan, Perikanan lestari yang berwawasan lingkungan dan berbasis kerakyatan",
+            "Peningkatan prasarana, sarana, dan utilitas umum yang mendukung kualitas dan keberlanjutan sektor",
+            "Peningkatan produktivitas dan diversifikasi usaha yang berbasis potensi",
+            "Peningkatkan kualitas sumberdaya manusia pelaku usaha",
+            "Peningkatan Peran Masyarakat dan kelembagaan dalam mendukung dan menciptakan iklim berusaha"
+        ]
+    },
+    "industri_sumbawa_barat": {
+        "id": "A3",
+        "name": "KSP Kawasan Industri Sumbawa Barat DSK",
+        "type": "KSP Pertumbuhan Ekonomi",
+        "coverage": "Kabupaten Sumbawa Barat dan perairan Kawasan Maluk",
+        "sectors": ["Pertambangan", "Industri", "Perikanan", "Pariwisata"],
+        "description": "Mewujudkan Kawasan pendukung dan penyangga Kawasan Industri Maluk berbasis sektor unggulan Pertambangan dan industri turunannya, Perikanan, serta pariwisata",
+        "coordinates": [116.8167, -8.7167],
+        "objectives": [
+            "Pengembangan pusat-pusat pertumbuhan berbasis potensi sumber daya alam unggulan",
+            "Perlindungan, pelestarian, serta optimalisasi pemanfaatan potensi sumber daya alam",
+            "Industrialisasi hulu dan hilir sektor unggulan",
+            "Peningkatkan peran serta swasta dan Masyarakat",
+            "Pemanfaatan teknologi tepat guna ramah lingkungan",
+            "Pengembangan dan peningkatan kualitas dan jangkauan pelayanan sarana dan prasarana"
+        ]
+    },
+    "agribisnis_poto_tano": {
+        "id": "A4",
+        "name": "KSP Agroindustri Poto Tano - Alas Utan DSK",
+        "type": "KSP Pertumbuhan Ekonomi",
+        "coverage": "Kabupaten Sumbawa Barat, Kabupaten Sumbawa, perairan Kawasan Maluk, dan perairan Kawasan Alas",
+        "sectors": ["Agroindustri", "Perikanan", "Peternakan", "Pariwisata"],
+        "description": "Mewujudkan Kawasan agribisnis dengan sektor unggulan agroindustri, Perikanan, peternakan, dan pariwisata",
+        "coordinates": [117.0000, -8.5000],
+        "objectives": [
+            "Pengembangan pusat-pusat pertumbuhan berbasis potensi sumber daya alam unggulan",
+            "Perlindungan, pelestarian, serta optimalisasi pemanfaatan potensi sumber daya alam",
+            "Industrialisasi hulu dan hilir sektor unggulan",
+            "Peningkatkan peran serta swasta dan Masyarakat",
+            "Pemanfaatan teknologi tepat guna ramah lingkungan",
+            "Pengembangan dan peningkatan kualitas dan jangkauan pelayanan sarana dan prasarana"
+        ]
+    },
+    "samota": {
+        "id": "A5",
+        "name": "KSP Saleh-Moyo-Tambora (SAMOTA) DSK",
+        "type": "KSP Pertumbuhan Ekonomi",
+        "coverage": "Kabupaten Sumbawa, Kabupaten Dompu, perairan Kawasan Pantura Sumbawa, perairan Kawasan Laut Flores Dompu, dan perairan Kawasan Teluk Saleh",
+        "sectors": ["Perikanan", "Pariwisata", "Pertanian", "Peternakan", "Mina Industri", "Agroindustri"],
+        "description": "Mewujudkan Kawasan Strategis Cepat Tumbuh (KSCT) SAMOTA yang berbasis sektor Perikanan, pariwisata, pertanian, peternakan, mina industri, dan agroindustri",
+        "coordinates": [117.6000, -8.3000],
+        "objectives": [
+            "Pengembangan sektor pariwisata, industri dan Perikanan yang berkelanjutan dan memiliki nilai tambah yang tinggi",
+            "Penguatan sistem pusat pelayanan kegiatan ekonomi yang terintegrasi dengan sistem jaringan prasarana Wilayah",
+            "Pengendalian dan pelestarian Kawasan Lindung dan cagar biosfer dalam menjaga kelestarian lingkungan hidup",
+            "Pengembangan dan pengendalian Kawasan Budi Daya dengan memperhatikan aspek keberlanjutan",
+            "Peningkatan Peran Masyarakat dalam pengembangan Kawasan",
+            "Pengelolaan mitigasi bencana dalam Pemanfaatan Ruang Kawasan"
+        ]
+    },
+    "teluk_cempi_huu": {
+        "id": "A6",
+        "name": "KSP Teluk Cempi Hu'u DSK",
+        "type": "KSP Pertumbuhan Ekonomi",
+        "coverage": "Kabupaten Sumbawa, Kabupaten Dompu, Kabupaten Bima, perairan Kawasan Teluk Cempi, perairan Kawasan Samudera Hindia Sumba Dompu, dan perairan Kawasan Samudera Hindia Cempi Waworada",
+        "sectors": ["Pariwisata", "Perikanan", "Industri", "Pertambangan", "Energi"],
+        "description": "Mewujudkan Kawasan pertumbuhan baru dengan sektor unggulan pariwisata, Perikanan, industri, Pertambangan dan energi",
+        "coordinates": [118.2000, -8.6000],
+        "objectives": [
+            "Pengembangan pusat-pusat pertumbuhan berbasis potensi sumber daya alam unggulan",
+            "Perlindungan, pelestarian, serta optimalisasi pemanfaatan potensi sumber daya alam",
+            "Industrialisasi hulu dan hilir sektor unggulan dengan memanfaatkan teknologi tepat guna ramah lingkungan",
+            "Pengembangan dan peningkatan kualitas dan jangkauan pelayanan sarana dan prasarana",
+            "Penataan dan pengendalian Kawasan yang berbasis pada aspek pengurangan risiko bencana",
+            "Peningkatan prasarana, sarana, dan utilitas umum yang mendukung kualitas dan keberlanjutan sektor",
+            "Peningkatan Peran Masyarakat dan kelembagaan dalam mendukung dan menciptakan iklim berusaha"
+        ]
+    },
+    "teluk_bima": {
+        "id": "A7",
+        "name": "KSP Teluk Bima DSK",
+        "type": "KSP Pertumbuhan Ekonomi",
+        "coverage": "Kabupaten Dompu, Kabupaten Bima, Kota Bima, perairan Kawasan Laut Flores Bima Dompu, perairan Kawasan Laut Flores Dompu, perairan Kawasan Teluk Bima, dan perairan Kawasan Teluk Sanggar",
+        "sectors": ["Pariwisata", "Perikanan", "Industri", "Perdagangan dan Jasa"],
+        "description": "Mewujudkan Kawasan Teluk Bima sebagai Kawasan Pariwisata, perikanan, industri, serta perdagangan dan jasa yang berwawasan lingkungan dan berbasis kemasyarakatan",
+        "coordinates": [118.7167, -8.4667],
+        "objectives": [
+            "Pengembangan linkage system sektor pariwisata, Perikanan, industri, serta perdagangan dan jasa yang terintegrasi",
+            "Perlindungan, pelestarian, serta optimalisasi pemanfaatan potensi sumber daya alam serta sumber daya Kelautan dan Perikanan",
+            "Penataan dan pengendalian Kawasan yang berbasis pada aspek pengurangan risiko bencana",
+            "Penyelenggaraan kegiatan pariwisata berkelanjutan, Perikanan lestari, industri, serta perdagangan dan jasa",
+            "Peningkatan prasarana, sarana, dan utilitas umum yang mendukung kualitas dan keberlanjutan sektor",
+            "Peningkatan produktivitas dan diversifikasi usaha yang berbasis potensi",
+            "Peningkatkan kualitas sumberdaya manusia pelaku usaha",
+            "Peningkatan Peran Masyarakat dan kelembagaan dalam mendukung dan menciptakan iklim berusaha"
+        ]
+    },
+    "waworada_sape": {
+        "id": "A8",
+        "name": "KSP Waworada - Sape DSK",
+        "type": "KSP Pertumbuhan Ekonomi",
+        "coverage": "Kabupaten Bima, perairan Kawasan Samudera Hindia Cempi Waworada, perairan Kawasan Waworada, perairan Kawasan Sape, dan perairan Kawasan Laut Flores Bima Dompu",
+        "sectors": ["Perikanan", "Pariwisata", "Industri"],
+        "description": "Mewujudkan Kawasan timur pertumbuhan baru berbasis sektor Perikanan, pariwisata, dan industri",
+        "coordinates": [118.8500, -8.4000],
+        "objectives": [
+            "Pengembangan linkage system sektor pariwisata, Perikanan, dan industri yang terintegrasi",
+            "Perlindungan, pelestarian, serta optimalisasi pemanfaatan potensi sumber daya alam serta sumber daya Kelautan dan Perikanan",
+            "Penataan dan pengendalian Kawasan yang berbasis pada aspek pengurangan risiko bencana",
+            "Penyelenggaraan kegiatan pariwisata berkelanjutan, Perikanan lestari yang berwawasan lingkungan dan berbasis kerakyatan",
+            "Peningkatan prasarana, sarana, dan utilitas umum yang mendukung kualitas dan keberlanjutan sektor",
+            "Peningkatan produktivitas dan diversifikasi usaha yang berbasis potensi",
+            "Peningkatkan kualitas sumberdaya manusia pelaku usaha",
+            "Peningkatan Peran Masyarakat dan kelembagaan dalam mendukung dan menciptakan iklim berusaha"
+        ]
+    },
+    "ekosistem_ngengas": {
+        "id": "B1",
+        "name": "KSP Ekosistem Puncak Ngengas Selalu Legini",
+        "type": "KSP Fungsi dan Daya Dukung Lingkungan Hidup",
+        "coverage": "Kabupaten Sumbawa Barat dan Kabupaten Sumbawa",
+        "sectors": ["Konservasi", "Mitigasi Bencana", "Jasa Ekosistem"],
+        "description": "Mewujudkan Kawasan dengan nilai konservasi tinggi berbasis mitigasi bencana",
+        "coordinates": [117.1000, -8.6000],
+        "objectives": [
+            "Perlindungan terhadap kelestarian keanekaragaman hayati",
+            "Pemanfaatan jasa ekosistem ramah lingkungan",
+            "Penyediaan layanan ekosistem dasar dalam kondisi kritis seperti perlindungan daerah aliran sungai dan pengendali erosi",
+            "Pengelolaan Kawasan yang memiliki kebutuhan dasar untuk komunitas lokal serta memiliki peranan penting bagi warga setempat",
+            "Pengembangan dan pemanfaatan nilai-nilai kearifan lokal dan budaya yang menerapkan pelestarian dan keberlanjutan lingkungan hidup"
+        ]
+    },
+    "gunung_tambora": {
+        "id": "B2",
+        "name": "KSP Ekosistem Gunung Tambora",
+        "type": "KSP Fungsi dan Daya Dukung Lingkungan Hidup",
+        "coverage": "Kabupaten Dompu dan Kabupaten Bima",
+        "sectors": ["Konservasi", "Geologi", "Pariwisata Alam"],
+        "description": "Kawasan konservasi gunung berapi dengan nilai geologis dan ekologis tinggi",
+        "coordinates": [117.9900, -8.2500],
+        "objectives": [
+            "Pelestarian kawasan konservasi gunung berapi",
+            "Pengembangan pariwisata alam berkelanjutan",
+            "Perlindungan keanekaragaman hayati endemik"
+        ]
+    },
+    "hutan_parado": {
+        "id": "B3",
+        "name": "KSP Ekosistem Hutan Parado",
+        "type": "KSP Fungsi dan Daya Dukung Lingkungan Hidup",
+        "coverage": "Kabupaten Dompu dan Kabupaten Bima",
+        "sectors": ["Konservasi Hutan", "Perlindungan Tata Air", "Rehabilitasi Lahan"],
+        "description": "Mewujudkan Kawasan penyangga dan perlindungan tata air",
+        "coordinates": [118.5000, -8.3000],
+        "objectives": [
+            "Penghijauan dan reboisasi hutan",
+            "Rehabilitasi hutan dan lahan kritis",
+            "Pengawasan dan Penertiban kegiatan Masyarakat yang berpotensi merusak lingkungan"
+        ]
+    }
+};
+
 // 16 Sektor yang diminta
 const allSectors = [
     { name: "Perindustrian", icon: "fa-industry" },
@@ -4637,3 +4829,4 @@ const regionCoordinates = {
 };
 
 const regions = Object.keys(investmentData);
+const kspKeys = Object.keys(kspData);
