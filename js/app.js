@@ -544,7 +544,7 @@ function createKspPopupContent(ksp, kspKey) {
                     ${ksp.coverage}
                 </div>
                 <div class="popup-sectors">
-                    <strong>Sektor Unggulan:</strong><br>
+                    <strong>Sektor Unggulan</strong><br>
                     ${sectorsText}
                 </div>
                 <div class="popup-actions">
@@ -1602,7 +1602,7 @@ async function createRegionSlides() {
                             <ul>${sektorBasisHTML || '<li>Data tidak tersedia</li>'}</ul>
                         </div>
                         <div class="analysis-card">
-                            <h4><i class="fas fa-star"></i> Sektor Unggulan</h4>
+                            <h4><i class="fas fa-star"></i> Sektor Unggulan 2025</h4>
                             <p>Sektor dengan potensi pertumbuhan dan daya saing tertinggi.</p>
                             <ul>${sektorUnggulanHTML || '<li>Data tidak tersedia</li>'}</ul>
                         </div>
