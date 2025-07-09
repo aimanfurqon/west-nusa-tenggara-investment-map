@@ -2224,3 +2224,82 @@ body {
     outline: none !important;
     user-select: none !important;
 }
+
+/* Card Detail Sektor Basis dan Sektor Unggulan 2025 */
+
+/* css/styles.css */
+
+.economic-analysis-container {
+    margin-top: 30px;
+    padding: 20px;
+    background: var(--light-bg);
+    border-radius: 12px;
+}
+
+.analysis-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.analysis-header h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.analysis-header i {
+    font-size: 1.5rem;
+    color: var(--primary-blue);
+    margin-bottom: 10px;
+}
+
+.analysis-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.analysis-card {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.analysis-card h4 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--primary-blue);
+}
+
+.analysis-card:last-child h4 {
+    color: var(--primary-green);
+}
+
+.analysis-card p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.analysis-card ul {
+    list-style-type: none;
+    padding-left: 0;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.analysis-card ul li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.analysis-card ul li:last-child {
+    border-bottom: none;
+}

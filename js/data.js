@@ -4828,5 +4828,87 @@ const regionCoordinates = {
     "Nusa Tenggara Barat": [116.10350952869848, -8.57867222621296 ] // Diupdate, ditaruh ke kantor gubernur ntb, agar tidak menabrak ke titik mataram  
 };
 
+const sektorEkonomiData = {
+    "Mataram": {
+        basis: ["Industri Pengolahan","Pengadaan Listrik dan Gas","Pengadaan Air", "Pengelolaan Sampah, Limbah dan Daur Ulang", "Perdagangan Besar dan Eceran","Reparasi Mobil dan Sepeda Motor", "Informasi dan Komunikasi", "Jasa Keuangan dan Asuransi", "Real Estat", "Jasa Perusahaan", "Administrasi Pemerintahan, Pertahanan dan Jaminan Sosial Wajib", "Jasa Pendidikan", "Jasa Kesehatan dan Kegiatan Sosial", "Jasa Lainnya"],
+        unggulan: ["Industri Pengolahan", "Penyediaan Akomodasi dan Makan Minum (Pariwisata)"]
+    },
+    "Lombok Barat": {
+        basis: ["Industri Pengolahan", "Pengadaan Listrik dan Gas", "Pengadaan Air, Pengelolaan Sampah, Limbah dan Daur Ulang", "Konstruksi", "Perdagangan Besar dan Eceran", "Reparasi Mobil dan SepedaMotor", "Transportasi dan Pergudangan", "Penyediaan Akomodasi dan Makan Minum", "Informasi dan Komunikasi", "Jasa Keuangan dan Asuransi", "Real Estat"],
+        unggulan: ["Pertanian, Kehutanan, dan Perikanan", "Industri Pengolahan", "Penyediaan Akomodasi dan Makan Minum (Pariwisata)"]
+    },
+    "Lombok Tengah": {
+        basis: ["Pertanian, Kehutanan, dan Perikanan", "Industri Pengolahan", "Pengadaan Air, Pengelolaan Sampah, Limbah dan Daur Ulang", "Konstruksi", "Transportasi dan Pergudangan", "Real Estat", "Jasa Pendidikan", "Jasa Kesehatan dan Kegiatan Sosial", "Jasa Lainnya"],
+        unggulan: ["Pertanian, Kehutanan, dan Perikanan", "Industri Pengolahan", "Penyediaan Akomodasi dan Makan Minum (Pariwisata)"]
+    },
+    "Lombok Timur": {
+        basis: ["Pertanian, Kehutanan, dan Perikanan","Industri Pengolahan","Konstruksi","Perdagangan Besar dan Eceran; Reparasi Mobil dan Sepeda Motor","Real Estat","Administrasi Pemerintahan, Pertahanan dan Jaminan Sosial Wajib","Jasa Pendidikan","Jasa Kesehatan dan Kegiatan Sosial"],
+        unggulan: ["Pertanian, Kehutanan, dan Perikanan","Penyediaan Akomodasi dan Makan Minum (Pariwisata)"]
+    },
+    "Lombok Utara": {
+        basis: ["Pertanian, Kehutanan, dan Perikanan","Pengadaan Listrik dan Gas","Pengadaan Air, Pengelolaan Sampah, Limbah dan Daur Ulang", "Konstruksi",
+  "Perdagangan Besar dan Eceran; Reparasi Mobil dan Sepeda Motor",
+  "Penyediaan Akomodasi dan Makan Minum",
+  "Informasi dan Komunikasi",
+  "Real Estat",
+  "Jasa Perusahaan",
+  "Administrasi Pemerintahan, Pertahanan dan Jaminan Sosial Wajib",
+  "Jasa Pendidikan",
+  "Jasa Kesehatan dan Kegiatan Sosial",
+  "Jasa Lainnya"
+],        unggulan:["Pertanian, Kehutanan, dan Perikanan", "Penyediaan Akomodasi dan Makan Minum (Pariwisata)"]
+    },
+    "Sumbawa Barat": {
+        basis: ["Pertambangan dan Penggalian","Pertambangan dan Penggalian", "Penyediaan Akomodasi dan Makan Minum (Pariwisata)"],
+        unggulan: ["Pertambangan dan Penggalian", "Penyediaan Akomodasi dan Makan Minum (Pariwisata)"]
+
+      },
+    "Sumbawa": {
+        basis:  ["Pertanian, Kehutanan, dan Perikanan", "Pengadaan Listrik dan Gas","Konstruksi"],
+        unggulan: ["Pertanian, Kehutanan, dan Perikanan","Industri Pengolahan"]
+},
+    "Dompu": {
+        basis: [
+    "Pertanian, Kehutanan, dan Perikanan",
+    "Perdagangan Besar dan Eceran; Reparasi Mobil dan Sepeda Motor",
+    "Real Estat",
+    "Jasa Perusahaan",
+    "Administrasi Pemerintahan, Pertahanan dan Jaminan Sosial Wajib",
+    "Jasa Pendidikan"
+  ],
+         unggulan: [
+    "Pertanian, Kehutanan, dan Perikanan",
+    "Pertambangan dan Penggalian"
+  ]
+    },
+    "Bima": {
+        basis: ["Pertanian, Kehutanan, dan Perikanan",
+    "Perdagangan Besar dan Eceran; Reparasi Mobil dan Sepeda Motor",
+    "Transportasi dan Pergudangan",
+    "Jasa Keuangan dan Asuransi",
+    "Administrasi Pemerintahan, Pertahanan dan Jaminan Sosial Wajib"
+  ],
+        unggulan: ["Pertanian, Kehutanan, dan Perikanan"]
+    },
+    "Kota Bima": {
+        basis: [
+    "Pengadaan Listrik dan Gas",
+    "Perdagangan Besar dan Eceran; Reparasi Mobil dan Sepeda Motor",
+    "Transportasi dan Pergudangan",
+    "Penyediaan Akomodasi dan Makan Minum",
+    "Real Estat",
+    "Jasa Perusahaan",
+    "Administrasi Pemerintahan, Pertahanan dan Jaminan Sosial Wajib",
+    "Jasa Pendidikan",
+    "Jasa Kesehatan dan Kegiatan Sosial",
+    "Jasa Lainnya"
+  ],
+        unggulan: ["Penyediaan Akomodasi dan Makan Minum (Pariwisata)"]
+    }
+};
+
+
 const regions = Object.keys(investmentData);
 const kspKeys = Object.keys(kspData);
+
+// data.js

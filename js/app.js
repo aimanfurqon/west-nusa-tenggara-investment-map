@@ -1541,7 +1541,13 @@ async function createRegionSlides() {
                 `;
             }).join('');
            
-             const logoDetailFileName = regionKey.replace(/ /g, "_") + ".png";
+            const logoDetailFileName = regionKey.replace(/ /g, "_") + ".png";
+            
+            const sektorData = sektorEkonomiData[regionKey] || { basis: [], unggulan: [] };
+            const sektorBasisHTML = sektorData.basis.map(sektor => `<li><i class="fas fa-check-circle" style="color: var(--primary-blue); margin-right: 8px;"></i>${sektor}</li>`).join('');
+            const sektorUnggulanHTML = sektorData.unggulan.map(sektor => `<li><i class="fas fa-star" style="color: var(--accent-gold); margin-right: 8px;"></i>${sektor}</li>`).join('');
+
+            
             slide.innerHTML = `
                 <div class="region-detail-header">
                     <div class="region-detail-title">
@@ -1582,6 +1588,25 @@ async function createRegionSlides() {
                 
                 <div class="sectors-grid" id="sectorsGrid-${index}" role="grid" aria-label="Daftar sektor ekonomi">
                     ${sectorCards}
+                </div>
+
+                <div class="economic-analysis-container">
+                    <div class="analysis-header">
+                        <i class="fas fa-chart-pie"></i>
+                        <h3>Analisis Sektor Ekonomi</h3>
+                    </div>
+                    <div class="analysis-cards">
+                        <div class="analysis-card">
+                            <h4><i class="fas fa-layer-group"></i> Sektor Basis</h4>
+                            <p>Sektor yang menjadi fondasi perekonomian wilayah.</p>
+                            <ul>${sektorBasisHTML || '<li>Data tidak tersedia</li>'}</ul>
+                        </div>
+                        <div class="analysis-card">
+                            <h4><i class="fas fa-star"></i> Sektor Unggulan</h4>
+                            <p>Sektor dengan potensi pertumbuhan dan daya saing tertinggi.</p>
+                            <ul>${sektorUnggulanHTML || '<li>Data tidak tersedia</li>'}</ul>
+                        </div>
+                    </div>
                 </div>
             `;
             
